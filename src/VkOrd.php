@@ -87,7 +87,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws ConflictException
      */
-    #[Put('/v1/person/{external_id}')]
+    #[Put('/v1/person/{external_id}', 'person')]
     public function setPerson(string $external_id, Person $person): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -104,7 +104,7 @@ class VkOrd
      * @throws BadRequestException
      * @throws UnauthorizedException
      */
-    #[Get('/v1/person/{external_id}', 'person')]
+    #[Get('/v1/person/{external_id}')]
     public function getPerson(string $external_id): Person
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
