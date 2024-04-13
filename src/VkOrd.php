@@ -24,6 +24,8 @@ use DarkDarin\VkOrdSdk\DTO\OkvedItems;
 use DarkDarin\VkOrdSdk\DTO\OkvedLangEnum;
 use DarkDarin\VkOrdSdk\DTO\Pad;
 use DarkDarin\VkOrdSdk\DTO\Person;
+use DarkDarin\VkOrdSdk\DTO\StatisticItems;
+use DarkDarin\VkOrdSdk\DTO\StatisticItemsCreated;
 use DarkDarin\VkOrdSdk\DTO\WholeInvoice;
 use DarkDarin\VkOrdSdk\Exceptions\BadRequestException;
 use DarkDarin\VkOrdSdk\Exceptions\ConflictException;
@@ -34,7 +36,7 @@ use DarkDarin\VkOrdSdk\TransportClient\TransportClientInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * @psalm-api
+ * @api
  */
 class VkOrd
 {
@@ -87,7 +89,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws ConflictException
      */
-    #[Put('/v1/person/{external_id}', 'person')]
+    #[Put('/v1/person/{external_id}', body: 'person')]
     public function setPerson(string $external_id, Person $person): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -144,7 +146,7 @@ class VkOrd
      * @throws NotFoundException Одна из сторон договора не найдена
      * @throws ConflictException
      */
-    #[Put('/v1/contract/{external_id}', 'contract')]
+    #[Put('/v1/contract/{external_id}', body: 'contract')]
     public function setContract(string $external_id, Contract $contract): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -201,7 +203,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException Владелец рекламной площадки не найден
      */
-    #[Put('/v1/pad/{external_id}', 'pad')]
+    #[Put('/v1/pad/{external_id}', body: 'pad')]
     public function setPad(string $external_id, Pad $pad): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -258,7 +260,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException Внешний идентификатор изначального договора не найден
      */
-    #[Put('/v2/creative/{external_id}', 'creative')]
+    #[Put('/v2/creative/{external_id}', body: 'creative')]
     public function setCreative(string $external_id, Creative $creative): CreativeEridInfo
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -414,7 +416,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException Изначальный договор в разаллокации не найден
      */
-    #[Put('/v1/invoice/{external_id}', 'invoice')]
+    #[Put('/v1/invoice/{external_id}', body: 'invoice')]
     public function setWholeInvoice(string $external_id, WholeInvoice $invoice): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -454,7 +456,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException Договор, к которому добавляется акт, не найден
      */
-    #[Put('/v2/invoice/{external_id}/header', 'invoice')]
+    #[Put('/v2/invoice/{external_id}/header', body: 'invoice')]
     public function setInvoice(string $external_id, Invoice $invoice): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -627,7 +629,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws InternalServerError
      */
-    #[Post('/v1/erir_statuses', )]
+    #[Post('/v1/erir_statuses')]
     public function getErirStatusesAdditional(
         ErirDataTypeEnum $data_type = null,
         ErirStatusEnum $erir_status = null,
@@ -658,6 +660,64 @@ class VkOrd
         int $offset = null,
         int $limit = null,
     ): OkvedItems {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод получает список внешних идентификаторов статистик.
+     * Query-параметры применяются как при операции логического «И».
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-get-statistics-list
+     *
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
+     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
+     * @param array|null $months Фильтрация по месяцам. Значение используется в формате YYYY-MM-01
+     * @param array|null $creative_external_ids Фильтрация по внешним идентификаторам креативов.
+     * @param string|null $pad_external_id Фильтрация по внешнему идентификатору рекламной площадки.
+     * @return StatisticItems
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws InternalServerError
+     */
+    #[Get('/v1/statistics/list')]
+    public function getStatisticsList(
+        int $offset = null,
+        int $limit = null,
+        array $months = null,
+        array $creative_external_ids = null,
+        string $pad_external_id = null,
+    ): StatisticItems {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод создаёт или обновляет статистики, не связанные с актами.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-create-statistics
+     *
+     * @param StatisticItems $items
+     * @return StatisticItemsCreated
+     */
+    #[Post('/v1/statistics', body: 'items')]
+    public function setStatistics(
+        StatisticItems $items,
+    ): StatisticItemsCreated {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод удаляет статистики, не связанные с актами.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-delete-statistics
+     *
+     * @param StatisticItems $items
+     * @return bool
+     */
+    #[Post('/v1/statistics/delete', body: 'items')]
+    public function deleteStatistics(
+        StatisticItems $items,
+    ): bool {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 }
