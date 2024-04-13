@@ -612,6 +612,34 @@ class VkOrd
     }
 
     /**
+     * Метод получает статусы обработки объектов по работе с рекламой от ЕРИР.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/erir_status/v1-post-ad-object-processing-status
+     *
+     * @param ErirDataTypeEnum|null $data_type Объекты по работе с рекламой, по которым выполняется фильтрация выдачи
+     * @param ErirStatusEnum|null $erir_status Статусы обработки от ЕРИР, по которым выполняется фильтрация выдачи
+     * @param list<string>|null $external_id Список внешних идентификаторов объектов по работе с рекламой, статусы обработки которых необходимо получить
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе
+     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос
+     * @param int|null $limit_per_entity Максимальное количество элементов каждого объекта по работе с рекламой, которые необходимо получить за один запрос
+     * @return ErirStatusItems
+     *
+     * @throws UnauthorizedException
+     * @throws InternalServerError
+     */
+    #[Post('/v1/erir_statuses', )]
+    public function getErirStatusesAdditional(
+        ErirDataTypeEnum $data_type = null,
+        ErirStatusEnum $erir_status = null,
+        array $external_id = null,
+        int $offset = null,
+        int $limit = null,
+        int $limit_per_entity = null,
+    ): ErirStatusItems {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
      * Метод получает коды ОКВЭД, которые поддерживаются в ОРД VK.
      *
      * @param string|null $search Фраза, по которой фильтруется выдача запроса. Поиск выполняется в соответствии с языком, на котором описан код ОКВЭД

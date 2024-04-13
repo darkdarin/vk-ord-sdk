@@ -114,7 +114,7 @@ readonly class TransportClient implements TransportClientInterface
 
         if ($methodInfo->body !== null) {
             $dataStream = $this->streamFactory->createStream(
-                $this->serializer->serialize((object)$methodInfo->body, 'json')
+                $this->serializer->serialize((object) $methodInfo->body, 'json')
             );
 
             $request = $request->withBody($dataStream);
@@ -225,6 +225,4 @@ readonly class TransportClient implements TransportClientInterface
 
         return $url;
     }
-
-    private function getResponseType(string $method): string {}
 }
