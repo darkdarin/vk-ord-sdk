@@ -10,6 +10,7 @@ use DarkDarin\VkOrdSdk\Attributes\Put;
 use DarkDarin\VkOrdSdk\DTO\Contract;
 use DarkDarin\VkOrdSdk\DTO\Creative;
 use DarkDarin\VkOrdSdk\DTO\CreativeEridInfo;
+use DarkDarin\VkOrdSdk\DTO\CreativeEridList;
 use DarkDarin\VkOrdSdk\DTO\ErirDataTypeEnum;
 use DarkDarin\VkOrdSdk\DTO\ErirStatus;
 use DarkDarin\VkOrdSdk\DTO\ErirStatusEnum;
@@ -243,6 +244,24 @@ class VkOrd
      */
     #[Get('/v1/creative')]
     public function getCreativeList(int $offset = null, int $limit = null): ExternalIdItems
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод получает список маркеров рекламы, отсортированный по внешнему идентификатору в лексикографическом порядке.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v1-get-creative-erids-list
+     *
+     * @param int|null $offset Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
+     * @param int|null $limit Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
+     * @return CreativeEridList Информация о списке маркеров рекламы, отсортированном в лексикографическом порядке.
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     */
+    #[Get('v1/creative/list/erids')]
+    public function getCreativeEridList(int $offset = null, int $limit = null): CreativeEridList
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
