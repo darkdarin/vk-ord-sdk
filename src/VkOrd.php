@@ -18,6 +18,7 @@ use DarkDarin\VkOrdSdk\DTO\ExternalIdItems;
 use DarkDarin\VkOrdSdk\DTO\Invoice;
 use DarkDarin\VkOrdSdk\DTO\InvoiceContract;
 use DarkDarin\VkOrdSdk\DTO\InvoiceContractId;
+use DarkDarin\VkOrdSdk\DTO\InvoiceList;
 use DarkDarin\VkOrdSdk\DTO\Media;
 use DarkDarin\VkOrdSdk\DTO\MediaCheckSumInfo;
 use DarkDarin\VkOrdSdk\DTO\OkvedItems;
@@ -29,6 +30,7 @@ use DarkDarin\VkOrdSdk\DTO\StatisticItemsCreated;
 use DarkDarin\VkOrdSdk\DTO\WholeInvoice;
 use DarkDarin\VkOrdSdk\Exceptions\BadRequestException;
 use DarkDarin\VkOrdSdk\Exceptions\ConflictException;
+use DarkDarin\VkOrdSdk\Exceptions\GoneException;
 use DarkDarin\VkOrdSdk\Exceptions\InternalServerError;
 use DarkDarin\VkOrdSdk\Exceptions\NotFoundException;
 use DarkDarin\VkOrdSdk\Exceptions\UnauthorizedException;
@@ -423,6 +425,26 @@ class VkOrd
     }
 
     /**
+     * Метод получает список внешних идентификаторов актов, отсортированный в лексикографическом порядке.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-get-invoice-list
+     *
+     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
+     * @return InvoiceList
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     */
+    #[Get('/v1/invoice')]
+    public function getInvoiceList(
+        int $limit = null,
+        int $offset = null,
+    ): InvoiceList {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
      * Получить данные акта.
      *
      * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-get-invoice
@@ -698,6 +720,10 @@ class VkOrd
      *
      * @param StatisticItems $items
      * @return StatisticItemsCreated
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws InternalServerError
      */
     #[Post('/v1/statistics', body: 'items')]
     public function setStatistics(
@@ -713,6 +739,11 @@ class VkOrd
      *
      * @param StatisticItems $items
      * @return bool
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws GoneException
+     * @throws InternalServerError
      */
     #[Post('/v1/statistics/delete', body: 'items')]
     public function deleteStatistics(

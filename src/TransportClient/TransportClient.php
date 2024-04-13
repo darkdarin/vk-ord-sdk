@@ -8,6 +8,7 @@ use DarkDarin\VkOrdSdk\Attributes\Route;
 use DarkDarin\VkOrdSdk\DTO\Error;
 use DarkDarin\VkOrdSdk\Exceptions\BadRequestException;
 use DarkDarin\VkOrdSdk\Exceptions\ConflictException;
+use DarkDarin\VkOrdSdk\Exceptions\GoneException;
 use DarkDarin\VkOrdSdk\Exceptions\InternalServerError;
 use DarkDarin\VkOrdSdk\Exceptions\NotFoundException;
 use DarkDarin\VkOrdSdk\Exceptions\UnauthorizedException;
@@ -72,6 +73,7 @@ readonly class TransportClient implements TransportClientInterface
                     401 => new UnauthorizedException($error->error, $rawResponse->getStatusCode()),
                     404 => new NotFoundException($error->error, $rawResponse->getStatusCode()),
                     409 => new ConflictException($error->error, $rawResponse->getStatusCode()),
+                    410 => new GoneException($error->error, $rawResponse->getStatusCode()),
                     500 => new InternalServerError($error->error, $rawResponse->getStatusCode()),
                     default => new VkOrdException($error->error, $rawResponse->getStatusCode()),
                 };
