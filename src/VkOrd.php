@@ -305,6 +305,24 @@ class VkOrd
     }
 
     /**
+     * Метод получает данные креатива по маркеру рекламы.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v2-get-creative-by-erid
+     *
+     * @param string $erid Маркер рекламы.
+     * @return Creative Данные креатива
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    #[Get('/v2/creative/by_erid/{erid}')]
+    public function getCreativeByErid(string $erid): Creative
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
      * Метод добавляет тексты в креатив.
      *
      * @link https://ord.vk.com/help/api/swagger/#/creative/v1-add-texts-to-creative
