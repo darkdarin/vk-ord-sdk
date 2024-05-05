@@ -44,5 +44,9 @@
         "allow-plugins": {
             "php-http/discovery": false
         }
+    },
+    "scripts": {
+        "pint": "vendor/bin/pint",
+        "psalm": "vendor/bin/psalm --no-cache --output-format=phpstorm"
     }
 }

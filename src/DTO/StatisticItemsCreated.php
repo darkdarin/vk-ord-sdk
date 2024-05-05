@@ -8,6 +8,6 @@ readonly class StatisticItemsCreated
      * @param list<string> $external_ids
      */
     public function __construct(
-        public array $external_ids
+        public array $external_ids,
     ) {}
 }

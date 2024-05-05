@@ -416,7 +416,7 @@ class VkOrd
     public function uploadMedia(
         string $external_id,
         StreamInterface $media_file,
-        string $description
+        string $description,
     ): MediaCheckSumInfo {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args(), true);
     }
@@ -558,7 +558,7 @@ class VkOrd
     public function deleteCreativeFromInvoice(
         string $external_id,
         string $contract_external_id,
-        string $creative_external_id
+        string $creative_external_id,
     ): bool {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }

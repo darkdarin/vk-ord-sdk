@@ -26,7 +26,7 @@ class VkOrdSdkServiceProvider extends ServiceProvider
         $this->publishes(
             [
                 __DIR__ . '/../config/vk_ord.php' => $this->app->configPath('vk_ord.php'),
-            ]
+            ],
         );
     }
 

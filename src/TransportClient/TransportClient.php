@@ -116,7 +116,7 @@ readonly class TransportClient implements TransportClientInterface
 
         if ($methodInfo->body !== null) {
             $dataStream = $this->streamFactory->createStream(
-                $this->serializer->serialize((object) $methodInfo->body, 'json')
+                $this->serializer->serialize((object) $methodInfo->body, 'json'),
             );
 
             $request = $request->withBody($dataStream);
@@ -141,9 +141,9 @@ readonly class TransportClient implements TransportClientInterface
                     $builder->addResource(
                         $fieldName,
                         $this->streamFactory->createStream(
-                            $this->serializer->serialize($value, 'json')
+                            $this->serializer->serialize($value, 'json'),
                         ),
-                        ['headers' => ['Content-Type' => 'application/json']]
+                        ['headers' => ['Content-Type' => 'application/json']],
                     );
                 } else {
                     $builder->addResource($fieldName, $this->streamFactory->createStream($value));
