@@ -354,7 +354,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException
      */
-    #[Post('/v2/creative/{external_id}/add_text')]
+    #[Post('/v1/creative/{external_id}/add_text')]
     public function addTextToCreative(string $external_id, array $texts): CreativeEridInfo
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -372,7 +372,7 @@ class VkOrd
      * @throws BadRequestException
      * @throws UnauthorizedException
      */
-    #[Post('/v2/creative/{external_id}/add_external_media')]
+    #[Post('/v1/creative/{external_id}/add_external_media')]
     public function addExternalMediaToCreative(string $external_id, array $media_urls): CreativeEridInfo
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -391,7 +391,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException Внешние идентификаторы креатива или медиафайлов не найдены
      */
-    #[Post('/v2/creative/{external_id}/add_media')]
+    #[Post('/v1/creative/{external_id}/add_media')]
     public function addMediaToCreative(string $external_id, array $media_external_ids): CreativeEridInfo
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
