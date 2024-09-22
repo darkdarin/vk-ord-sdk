@@ -37,6 +37,35 @@ enum CreativeFormEnum: string
     case LiveVideo = 'live_video';
     /**
      * Иное
+     * @deprecated Больше не поддерживается
      */
     case Other = 'other';
+    /**
+     * Текстовый блок с видео
+     */
+    case TextVideoBlock = 'text_video_block';
+    /**
+     * Текстово-графический блок с видео
+     */
+    case TextGraphicVideoBlock = 'text_graphic_video_block';
+    /**
+     * Текстовый блок с аудио
+     */
+    case TextAudioBlock = 'text_audio_block';
+    /**
+     * Текстово-графический блок с аудио
+     */
+    case TextGraphicAudioBlock = 'text_graphic_audio_block';
+    /**
+     * Текстовый блок с аудио и видео
+     */
+    case TextAudioVideoBlock = 'text_audio_video_block';
+    /**
+     * Текстово-графический блок с аудио и видео
+     */
+    case TextGraphicAudioVideoBlock = 'text_graphic_audio_video_block';
+    /**
+     * HTML5-баннер
+     */
+    case BannerHTML5 = 'banner_html5';
 }

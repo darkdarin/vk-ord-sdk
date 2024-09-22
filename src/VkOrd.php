@@ -371,6 +371,8 @@ class VkOrd
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
+     *
+     * @deprecated Метод больше не поддерживается
      */
     #[Post('/v1/creative/{external_id}/add_external_media')]
     public function addExternalMediaToCreative(string $external_id, array $media_urls): CreativeEridInfo
@@ -393,6 +395,25 @@ class VkOrd
      */
     #[Post('/v1/creative/{external_id}/add_media')]
     public function addMediaToCreative(string $external_id, array $media_external_ids): CreativeEridInfo
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод получает список внешних идентификаторов медиафайлов, отсортированный в лексикографическом порядке.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/media/v1-get-media
+     *
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0.
+     * @param int|null $limit МедиафайлКоличество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100. Максимальное количество элементов списка — 1 000.
+     * @return ExternalIdItems Информация о списке внешних идентификаторов медиафайлов.
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    #[Get('/v1/media')]
+    public function getMediaList(int $offset = null, int $limit = null): ExternalIdItems
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -553,6 +574,8 @@ class VkOrd
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws NotFoundException Креатив не найден
+     *
+     * @deprected Больше не поддерживается
      */
     #[Delete('/v1/invoice/{external_id}/{contract_external_id}/{creative_external_id}')]
     public function deleteCreativeFromInvoice(
@@ -575,6 +598,8 @@ class VkOrd
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws NotFoundException Изначальный договор в разаллокации не найден
+     *
+     * @deprected Больше не поддерживается
      */
     #[Delete('/v1/invoice/{external_id}/{contract_external_id}')]
     public function deleteContractFromInvoice(string $external_id, string $contract_external_id): bool

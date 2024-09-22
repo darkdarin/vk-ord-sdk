@@ -17,6 +17,7 @@ enum PadTypeEnum: string
     case MobileApp = 'mobile_app';
     /**
      * Информационная система. Любое другое место размещения рекламы
+     * @deprecated Данный тип площадки больше не поддерживается
      */
     case IS = 'is';
 }
