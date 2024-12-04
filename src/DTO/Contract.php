@@ -19,6 +19,7 @@ readonly class Contract
      * @param array<ContractFlagEnum>|null $flags Дополнительная информация о договоре
      * @param string|null $parent_contract_external_id Внешний идентификатор родительского договора, в отношении которого выполняются изменения
      * @param string|null $date_end Дата окончания договора в формате YYYY-MM-DD без привязки к часовому поясу
+     * @param string|null $comment Комментарий к договору (незадокументированное поле)
      * @param string|null $create_date Дата и время создания договора в формате ISO 8601
      */
     public function __construct(
@@ -33,6 +34,7 @@ readonly class Contract
         public ?array $flags = null,
         public ?string $parent_contract_external_id = null,
         public ?string $date_end = null,
+        public ?string $comment = null,
         public ?string $create_date = null,
     ) {}
 }
