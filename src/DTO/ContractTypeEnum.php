@@ -16,10 +16,6 @@ enum ContractTypeEnum: string
      */
     case Mediation = 'mediation';
     /**
-     * Договор саморекламы
-     */
-    case SelfPromotion = 'self_promotion';
-    /**
      * Дополнительное соглашение
      */
     case Additional = 'additional';

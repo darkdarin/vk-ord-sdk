@@ -193,6 +193,24 @@ class VkOrd
     }
 
     /**
+     * Метод отдает список требующих детализации url площадок. Детализация означает, что нужно указать конкретную
+     * группу, сообщество и т.д. на указанной платформе. При сохранении площадки с url из данного списка, будет выдана
+     * ошибка. Сравнение url производится без учета протокола и знака '/' в конце url.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/pad/v1-get-pad-info-restricted
+     *
+     * @return list<string> Список запрещенных url площадок
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     */
+    #[Get('/v1/pad/info/restricted')]
+    public function getPadInfoRestricted(): array
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
      * Метод создаёт или обновляет рекламную площадку. Если рекламная площадка с переданным идентификатором:
      * - Не существует, метод создаст рекламную площадку.
      * - Существует, метод обновит данные рекламной площадки.
@@ -361,26 +379,6 @@ class VkOrd
     }
 
     /**
-     * Метод добавляет URL-адреса на внешние ресурсы в креатив.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v1-add-external-urls-to-creative
-     *
-     * @param string $external_id Внешний идентификатор креатива
-     * @param list<string> $media_urls Список URL-адресов на внешние ресурсы, используемые в креативе
-     * @return CreativeEridInfo Информация о маркировке креатива
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     *
-     * @deprecated Метод больше не поддерживается
-     */
-    #[Post('/v1/creative/{external_id}/add_external_media')]
-    public function addExternalMediaToCreative(string $external_id, array $media_urls): CreativeEridInfo
-    {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
      * Метод добавляет медиафайлы в креатив.
      *
      * @link https://ord.vk.com/help/api/swagger/#/creative/v1-add-media-to-creative
@@ -479,6 +477,24 @@ class VkOrd
     }
 
     /**
+     * Метод получает список внешних идентификаторов актов, отсортированный в лексикографическом порядке.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-get-invoice-list
+     *
+     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
+     * @return InvoiceList
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     */
+    #[Get('/v1/invoice')]
+    public function getInvoiceList(int $limit = null, int $offset = null): InvoiceList
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
      * Метод создаёт или обновляет данные акта с информацией о разаллокации по изначальным договорам.
      * Изначальные договоры связаны с показами креативов на разных рекламных площадках.
      * Если акт с переданным идентификатором:
@@ -498,26 +514,6 @@ class VkOrd
     #[Put('/v1/invoice/{external_id}', body: 'invoice')]
     public function setWholeInvoice(string $external_id, WholeInvoice $invoice): bool
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод получает список внешних идентификаторов актов, отсортированный в лексикографическом порядке.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-get-invoice-list
-     *
-     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
-     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
-     * @return InvoiceList
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     */
-    #[Get('/v1/invoice')]
-    public function getInvoiceList(
-        int $limit = null,
-        int $offset = null,
-    ): InvoiceList {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 
@@ -562,47 +558,21 @@ class VkOrd
     }
 
     /**
-     * Метод удаляет креатив и рекламные площадки из изначального договора в разаллокации акта.
+     * Метод удаляет изначальные договоры, креативы и рекламные площадки из акта.
+     * Чтобы отправить обновлённый акт в ЕРИР, вызовите метод Отправить акт в ЕРИР.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-delete-creative-from-contract
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v2-delete-contracts-from-invoice
      *
      * @param string $external_id Внешний идентификатор акта
-     * @param string $contract_external_id Внешний идентификатор изначального договора в разаллокации акта
-     * @param string $creative_external_id Внешний идентификатор креатива, добавленного к изначальному договору в разаллокации
+     * @param list<InvoiceContractId> $items Данные изначальных договоров
      * @return bool
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
-     * @throws NotFoundException Креатив не найден
-     *
-     * @deprected Больше не поддерживается
+     * @throws NotFoundException
      */
-    #[Delete('/v1/invoice/{external_id}/{contract_external_id}/{creative_external_id}')]
-    public function deleteCreativeFromInvoice(
-        string $external_id,
-        string $contract_external_id,
-        string $creative_external_id,
-    ): bool {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод удаляет изначальный договор в разаллокации из акта.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-delete-contract-from-invoice
-     *
-     * @param string $external_id Внешний идентификатор акта
-     * @param string $contract_external_id Внешний идентификатор изначального договора в разаллокации акта
-     * @return bool
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws NotFoundException Изначальный договор в разаллокации не найден
-     *
-     * @deprected Больше не поддерживается
-     */
-    #[Delete('/v1/invoice/{external_id}/{contract_external_id}')]
-    public function deleteContractFromInvoice(string $external_id, string $contract_external_id): bool
+    #[Post('/v2/invoice/{external_id}/delete')]
+    public function deleteContractsFromInvoice(string $external_id, array $items): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -629,26 +599,6 @@ class VkOrd
     }
 
     /**
-     * Метод удаляет изначальные договоры, креативы и рекламные площадки из акта.
-     * Чтобы отправить обновлённый акт в ЕРИР, вызовите метод Отправить акт в ЕРИР.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v2-delete-contracts-from-invoice
-     *
-     * @param string $external_id Внешний идентификатор акта
-     * @param list<InvoiceContractId> $items Данные изначальных договоров
-     * @return bool
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws NotFoundException
-     */
-    #[Post('/v2/invoice/{external_id}/delete')]
-    public function deleteContractsFromInvoice(string $external_id, array $items): bool
-    {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
      *  Метод отправляет акт в ЕРИР.
      *  Вызов метода необходим, если вы создали акты или добавили в них данные с помощью методов:
      *  - Создать акт.
@@ -666,6 +616,71 @@ class VkOrd
      */
     #[Post('/v2/invoice/{external_id}/ready')]
     public function invoiceReady(string $external_id): bool
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод получает список внешних идентификаторов статистик.
+     * Query-параметры применяются как при операции логического «И».
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-get-statistics-list
+     *
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
+     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
+     * @param array|null $months Фильтрация по месяцам. Значение используется в формате YYYY-MM-01
+     * @param array|null $creative_external_ids Фильтрация по внешним идентификаторам креативов.
+     * @param string|null $pad_external_ids Фильтрация по внешнему идентификатору рекламной площадки.
+     * @return StatisticItems
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws InternalServerError
+     */
+    #[Get('/v1/statistics/list')]
+    public function getStatisticsList(
+        int $offset = null,
+        int $limit = null,
+        array $months = null,
+        array $creative_external_ids = null,
+        string $pad_external_ids = null,
+    ): StatisticItems {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод создаёт или обновляет статистики, не связанные с актами.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-create-statistics
+     *
+     * @param StatisticItems $items
+     * @return StatisticItemsCreated
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws InternalServerError
+     */
+    #[Post('/v1/statistics', body: 'items')]
+    public function setStatistics(StatisticItems $items): StatisticItemsCreated
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод удаляет статистики, не связанные с актами.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-delete-statistics
+     *
+     * @param StatisticItems $items
+     * @return bool
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws GoneException
+     * @throws InternalServerError
+     */
+    #[Post('/v1/statistics/delete', body: 'items')]
+    public function deleteStatistics(StatisticItems $items): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -747,6 +762,8 @@ class VkOrd
     /**
      * Метод получает коды ОКВЭД, которые поддерживаются в ОРД VK.
      *
+     * @link https://ord.vk.com/help/api/swagger/#/dictionary/v1-get-okved-codes
+     *
      * @param string|null $search Фраза, по которой фильтруется выдача запроса. Поиск выполняется в соответствии с языком, на котором описан код ОКВЭД
      * @param OkvedLangEnum|null $lang Язык, на котором описан код ОКВЭД
      * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе
@@ -767,69 +784,28 @@ class VkOrd
     }
 
     /**
-     * Метод получает список внешних идентификаторов статистик.
-     * Query-параметры применяются как при операции логического «И».
+     * Метод отдает коды ККТУ, которые поддерживаются в ОРД VK. В отличие от ОКВЭД поддерживается параметр codes - фильтрация по кодам.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-get-statistics-list
+     * @link https://ord.vk.com/help/api/swagger/#/dictionary/v1-get-kktu-codes
      *
-     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
-     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
-     * @param array|null $months Фильтрация по месяцам. Значение используется в формате YYYY-MM-01
-     * @param array|null $creative_external_ids Фильтрация по внешним идентификаторам креативов.
-     * @param string|null $pad_external_id Фильтрация по внешнему идентификатору рекламной площадки.
-     * @return StatisticItems
+     * @param string|null $search Фраза, по которой фильтруется выдача запроса. Поиск выполняется в соответствии с языком, на котором описан код ККТУ
+     * @param OkvedLangEnum|null $lang Язык, на котором описан код ККТУ
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе
+     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос
+     * @param string|null $codes Коды ККТУ, перечисленные через запятую
+     * @return OkvedItems
      *
      * @throws BadRequestException
-     * @throws UnauthorizedException
      * @throws InternalServerError
      */
-    #[Get('/v1/statistics/list')]
-    public function getStatisticsList(
+    #[Get('/v1/dict/kktu')]
+    public function getKktuDictionary(
+        string $search = null,
+        OkvedLangEnum $lang = null,
         int $offset = null,
         int $limit = null,
-        array $months = null,
-        array $creative_external_ids = null,
-        string $pad_external_id = null,
-    ): StatisticItems {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод создаёт или обновляет статистики, не связанные с актами.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-create-statistics
-     *
-     * @param StatisticItems $items
-     * @return StatisticItemsCreated
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws InternalServerError
-     */
-    #[Post('/v1/statistics', body: 'items')]
-    public function setStatistics(
-        StatisticItems $items,
-    ): StatisticItemsCreated {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод удаляет статистики, не связанные с актами.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-delete-statistics
-     *
-     * @param StatisticItems $items
-     * @return bool
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws GoneException
-     * @throws InternalServerError
-     */
-    #[Post('/v1/statistics/delete', body: 'items')]
-    public function deleteStatistics(
-        StatisticItems $items,
-    ): bool {
+        string $codes = null,
+    ): OkvedItems {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 }

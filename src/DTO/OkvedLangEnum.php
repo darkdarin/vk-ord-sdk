@@ -3,7 +3,7 @@
 namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
- * Язык, на котором описан код ОКВЭД
+ * Язык, на котором описан код ОКВЭД/ККТУ
  */
 enum OkvedLangEnum: string
 {
