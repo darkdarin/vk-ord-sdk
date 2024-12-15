@@ -6,6 +6,7 @@ use DarkDarin\Serializer\ApiSerializer\ApiSerializerInterface;
 use DarkDarin\Serializer\MethodParametersSerializer\MethodParametersMapperInterface;
 use DarkDarin\VkOrdSdk\Attributes\Route;
 use DarkDarin\VkOrdSdk\DTO\Error;
+use DarkDarin\VkOrdSdk\DTO\Errors;
 use DarkDarin\VkOrdSdk\Exceptions\BadRequestException;
 use DarkDarin\VkOrdSdk\Exceptions\ConflictException;
 use DarkDarin\VkOrdSdk\Exceptions\GoneException;
@@ -61,11 +62,15 @@ readonly class TransportClient implements TransportClientInterface
             $rawResponse = $this->client->sendRequest($request);
             if ($rawResponse->getStatusCode() !== 200 && $rawResponse->getStatusCode() !== 201) {
                 $body = $rawResponse->getBody()->getContents();
-                $error = new Error($rawResponse->getReasonPhrase());
 
                 try {
                     $error = $this->serializer->deserialize($body, Error::class, 'json');
                 } catch (\Throwable) {
+                    try {
+                        $error = $this->serializer->deserialize($body, Errors::class, 'json');
+                    } catch (\Throwable) {
+                        $error = new Error($rawResponse->getReasonPhrase());
+                    }
                 }
 
                 throw match ($rawResponse->getStatusCode()) {
