@@ -184,6 +184,9 @@ readonly class TransportClient implements TransportClientInterface
 
             $resultParameters = $parameters;
             foreach ($parameters as $key => $value) {
+                if ($value instanceof \BackedEnum) {
+                    $value = $value->value;
+                }
                 if (!is_string($value) && !is_int($value)) {
                     continue;
                 }
