@@ -9,6 +9,7 @@ use DarkDarin\VkOrdSdk\DTO\Error;
 use DarkDarin\VkOrdSdk\DTO\Errors;
 use DarkDarin\VkOrdSdk\Exceptions\BadRequestException;
 use DarkDarin\VkOrdSdk\Exceptions\ConflictException;
+use DarkDarin\VkOrdSdk\Exceptions\ForbiddenException;
 use DarkDarin\VkOrdSdk\Exceptions\GoneException;
 use DarkDarin\VkOrdSdk\Exceptions\InternalServerError;
 use DarkDarin\VkOrdSdk\Exceptions\NotFoundException;
@@ -76,6 +77,7 @@ readonly class TransportClient implements TransportClientInterface
                 throw match ($rawResponse->getStatusCode()) {
                     400 => new BadRequestException($error->error, $rawResponse->getStatusCode()),
                     401 => new UnauthorizedException($error->error, $rawResponse->getStatusCode()),
+                    403 => new ForbiddenException($error->error, $rawResponse->getStatusCode()),
                     404 => new NotFoundException($error->error, $rawResponse->getStatusCode()),
                     409 => new ConflictException($error->error, $rawResponse->getStatusCode()),
                     410 => new GoneException($error->error, $rawResponse->getStatusCode()),
@@ -97,14 +99,15 @@ readonly class TransportClient implements TransportClientInterface
 
             if (is_scalar($response)) {
                 return $response;
-            } else {
-                if ($methodInfo->returnType instanceof ArrayOf) {
-                    $type = $methodInfo->returnType->type . '[]';
-                } else {
-                    $type = $methodInfo->returnType;
-                }
-                return $this->serializer->denormalize($response, $type);
             }
+
+            if ($methodInfo->returnType instanceof ArrayOf) {
+                $type = $methodInfo->returnType->type . '[]';
+            } else {
+                $type = $methodInfo->returnType;
+            }
+
+            return $this->serializer->denormalize($response, $type);
         } catch (VkOrdException $e) {
             throw $e;
         } catch (\Throwable $e) {
