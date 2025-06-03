@@ -647,7 +647,7 @@ class VkOrd
      * @throws NotFoundException Изначальный договор в разаллокации не найден
      */
     #[Put('/v3/invoice/{external_id}', body: 'invoice')]
-    public function setInvoiceV3(string $external_id, InvoiceV3 $invoice, ?bool $draft = null): InfoResponse
+    public function setInvoiceV3(string $external_id, InvoiceV3 $invoice, ?bool $draft = null): bool|InfoResponse
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -676,7 +676,7 @@ class VkOrd
      * @throws NotFoundException Договор, к которому добавляется акт, не найден
      */
     #[Put('/v3/invoice/{external_id}/header', body: 'invoice')]
-    public function setInvoiceHeaderV3(string $external_id, InvoiceHeaderV3 $invoice): InfoResponse
+    public function setInvoiceHeaderV3(string $external_id, InvoiceHeaderV3 $invoice): bool|InfoResponse
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -700,7 +700,7 @@ class VkOrd
      * @throws NotFoundException Акт, изначальный договор в разаллокации, креатив или рекламная площадка не найдены
      */
     #[Patch('/v3/invoice/{external_id}/items', body: 'items')]
-    public function addContractsToInvoiceV3(string $external_id, InvoiceV3Items $items): InfoResponse
+    public function addContractsToInvoiceV3(string $external_id, InvoiceV3Items $items): bool|InfoResponse
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
