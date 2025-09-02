@@ -91,7 +91,7 @@ readonly class TransportClient implements TransportClientInterface
             }
 
             $body = $rawResponse->getBody()->getContents();
-            if (empty($body)) {
+            if (empty($body) || $body === 'null') {
                 return true;
             }
 
