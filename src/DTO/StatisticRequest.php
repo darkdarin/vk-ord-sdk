@@ -13,7 +13,7 @@ readonly class StatisticRequest
      * @param string|null $date_start_planned Запланированная дата начала рекламной кампании в формате YYYY-MM-DD без привязки к часовому поясу. Если не задана - берется из поля date_start_actual
      * @param string|null $date_end_planned Запланированная дата завершения рекламной кампании в формате YYYY-MM-DD без привязки к часовому поясу. Если не задана - берется из поля date_end_actual.
      * @param int|null $invoice_shows_count Оплаченное количество показов креатива на рекламной площадке.
-     * @param InvoiceItemAmount|null $amount Неотрицательная сумма, потраченная на показ креатива на рекламной площадке, в рублях.
+     * @param Amount|null $amount Неотрицательная сумма, потраченная на показ креатива на рекламной площадке, в рублях.
      * @param string|null $amount_per_event Стоимость в рублях одного целевого действия креатива на рекламной площадке.
      * @param CreativePayTypeEnum|null $pay_type Модель оплаты показа креатива.
      */
@@ -26,7 +26,7 @@ readonly class StatisticRequest
         public ?string $date_start_planned = null,
         public ?string $date_end_planned = null,
         public ?int $invoice_shows_count = null,
-        public ?InvoiceItemAmount $amount = null,
+        public ?Amount $amount = null,
         public ?string $amount_per_event = null,
         public ?CreativePayTypeEnum $pay_type = null,
     ) {}
