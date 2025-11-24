@@ -2,14 +2,14 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-/**
- * Дополнительная информация об акте.
- *
- */
 enum InvoiceFlagEnum: string
 {
     /**
-     * НДС включён в сумму акта.
+     * Сигнализирует о том, что акт имеет свойство социальной рекламы.
      */
-    case VatIncluded = 'vat_included';
+    case Social = 'social';
+    /**
+     * Сигнализирует о том, что акт имеет свойство социальной рекламы по квоте.
+     */
+    case SocialQuota = 'social_quota';
 }

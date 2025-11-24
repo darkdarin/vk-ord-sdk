@@ -8,11 +8,11 @@ namespace DarkDarin\VkOrdSdk\DTO;
 readonly class CreativeEridInfo
 {
     /**
-     * @param string $marker Токен маркировки креатива
      * @param string $erid Токен маркировки креатива
+     * @param list<CommonMessageItem> $messages Дополнительная информация к ответу
      */
     public function __construct(
-        public string $marker,
         public string $erid,
+        public ?array $messages = null,
     ) {}
 }

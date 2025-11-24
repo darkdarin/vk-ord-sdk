@@ -15,4 +15,8 @@ enum CreativeFlagEnum: string
      * Нативная реклама
      */
     case Native = 'native';
+    /**
+     * Социальная реклама по квоте
+     */
+    case SocialQuota = 'social_quota';
 }

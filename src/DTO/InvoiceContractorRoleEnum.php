@@ -2,8 +2,15 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-enum InvoiceV3ContractorRole: string
+/**
+ * Роль подрядчика (исполнителя) в договоре, к которому добавляется акт
+ */
+enum InvoiceContractorRoleEnum: string
 {
+    /**
+     * Рекламодатель
+     */
+    case Advertiser = 'advertiser';
     /**
      * Рекламное агентство
      */

@@ -5,7 +5,7 @@ namespace DarkDarin\VkOrdSdk\DTO;
 /**
  * Роль клиента (заказчика) в договоре, к которому добавляется акт
  */
-enum InvoiceV3PersonRole: string
+enum InvoiceClientRoleEnum: string
 {
     /**
      * Рекламодатель

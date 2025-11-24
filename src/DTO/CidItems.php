@@ -2,15 +2,18 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class StatisticItemsV2
+/**
+ * Информация о списке внешних cid.
+ */
+readonly class CidItems
 {
     /**
-     * @param list<StatisticV2>|null $items Элементы статистики
+     * @param list<string>|null $cids Список внешних cid, отсортированный в лексикографическом порядке.
      * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос.
      * @param int|null $total_items_count Общее количество элементов для выдачи по запросу.
      */
     public function __construct(
-        public ?array $items = null,
+        public ?array $cids = null,
         public ?int $limit = null,
         public ?int $total_items_count = null,
     ) {}

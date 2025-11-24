@@ -2,7 +2,7 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-enum InvoiceV3Status: string
+enum InvoiceStatusEnum: string
 {
     case Deleted = 'deleted';
     case Draft = 'draft';

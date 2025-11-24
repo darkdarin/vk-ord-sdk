@@ -36,11 +36,6 @@ enum CreativeFormEnum: string
      */
     case LiveVideo = 'live_video';
     /**
-     * Иное
-     * @deprecated Больше не поддерживается
-     */
-    case Other = 'other';
-    /**
      * Текстовый блок с видео
      */
     case TextVideoBlock = 'text_video_block';

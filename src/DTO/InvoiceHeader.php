@@ -3,9 +3,9 @@
 namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
- * Данные акта
+ * Данные акта без разоллакации
  */
-readonly class Invoice
+readonly class InvoiceHeader
 {
     /**
      * @param string $contract_external_id Внешний идентификатор договора, к которому добавляется акт
@@ -19,7 +19,6 @@ readonly class Invoice
      * @param list<InvoiceFlagEnum>|null $flags Дополнительная информация об акте.
      * @param string|null $order_contract_external_id Внешний идентификатор договора, по поручению которого заключен договор акта
      * @param string|null $serial Серийный номер акта
-     * @param list<InvoiceItem>|null $items Список изначальных договоров в разаллокации
      * @param InvoiceStatusEnum|null $status Статус акта.
      */
     public function __construct(
@@ -34,7 +33,6 @@ readonly class Invoice
         public ?array $flags = null,
         public ?string $order_contract_external_id = null,
         public ?string $serial = null,
-        public ?array $items = null,
         public ?InvoiceStatusEnum $status = null,
     ) {}
 }

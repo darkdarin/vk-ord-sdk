@@ -8,11 +8,13 @@ namespace DarkDarin\VkOrdSdk\DTO;
 readonly class InvoiceContractId
 {
     /**
-     * @param string $contract_external_id Внешний идентификатор изначального договора
+     * @param string|null $contract_external_id Внешний идентификатор изначального договора
+     * @param string|null $cid Внешний cid
      * @param list<InvoiceCreativeId>|null $creatives Список креативов изначального договора в разаллокации
      */
     public function __construct(
-        public string $contract_external_id,
+        public ?string $contract_external_id = null,
+        public ?string $cid = null,
         public ?array $creatives = null,
     ) {}
 }

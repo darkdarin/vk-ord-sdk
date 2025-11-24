@@ -3,9 +3,9 @@
 namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
- * Язык, на котором описан код ОКВЭД/ККТУ
+ * Язык, на котором описан код ККТУ
  */
-enum OkvedLangEnum: string
+enum KKTULangEnum: string
 {
     /**
      * Русский язык

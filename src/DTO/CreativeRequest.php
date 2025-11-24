@@ -2,12 +2,11 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class Creative
+readonly class CreativeRequest
 {
     /**
-     * @param string $erid Токен маркировки креатива.
+     * @param list<string> $kktus Список кодов ККТУ креатива. Для обычных креативов требуется 1 элемент, для кобрендинговых от 1 до 16.
      * @param CreativeFormEnum $form Форма распространения креатива.
-     * @param list<string>|null $kktus Список кодов ККТУ креатива. Для обычных креативов требуется 1 элемент, для кобрендинговых от 1 до 16.
      * @param string|null $name Название креатива. Используется для вашего удобства.
      * @param string|null $brand Бренд рекламируемых товаров или услуг. Допускается ввести несколько брендов через точку.
      * @param string|null $category Вид рекламируемых товаров или услуг. Допускается ввести несколько видов через точку.
@@ -23,9 +22,8 @@ readonly class Creative
      * @param list<string>|null $cids Список внешних cid, для которых создается креатив. Несовместимо с полями 'person_external_id' и 'contract_external_ids'.
      */
     public function __construct(
-        public string $erid,
+        public array $kktus,
         public CreativeFormEnum $form,
-        public ?array $kktus = null,
         public ?string $name = null,
         public ?string $brand = null,
         public ?string $category = null,

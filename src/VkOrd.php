@@ -7,34 +7,40 @@ use DarkDarin\VkOrdSdk\Attributes\Get;
 use DarkDarin\VkOrdSdk\Attributes\Patch;
 use DarkDarin\VkOrdSdk\Attributes\Post;
 use DarkDarin\VkOrdSdk\Attributes\Put;
+use DarkDarin\VkOrdSdk\DTO\Cid;
+use DarkDarin\VkOrdSdk\DTO\CidItems;
+use DarkDarin\VkOrdSdk\DTO\CidRequest;
 use DarkDarin\VkOrdSdk\DTO\Contract;
 use DarkDarin\VkOrdSdk\DTO\Creative;
 use DarkDarin\VkOrdSdk\DTO\CreativeEridExternalIdsList;
 use DarkDarin\VkOrdSdk\DTO\CreativeEridInfo;
 use DarkDarin\VkOrdSdk\DTO\CreativeEridList;
+use DarkDarin\VkOrdSdk\DTO\CreativeRequest;
 use DarkDarin\VkOrdSdk\DTO\ErirDataTypeEnum;
+use DarkDarin\VkOrdSdk\DTO\ErirLangEnum;
+use DarkDarin\VkOrdSdk\DTO\ErirMessages;
 use DarkDarin\VkOrdSdk\DTO\ErirStatus;
 use DarkDarin\VkOrdSdk\DTO\ErirStatusEnum;
 use DarkDarin\VkOrdSdk\DTO\ErirStatusItems;
 use DarkDarin\VkOrdSdk\DTO\ExternalIdItems;
+use DarkDarin\VkOrdSdk\DTO\ExternalIds;
 use DarkDarin\VkOrdSdk\DTO\InfoResponse;
 use DarkDarin\VkOrdSdk\DTO\Invoice;
-use DarkDarin\VkOrdSdk\DTO\InvoiceContract;
 use DarkDarin\VkOrdSdk\DTO\InvoiceContractId;
+use DarkDarin\VkOrdSdk\DTO\InvoiceHeader;
+use DarkDarin\VkOrdSdk\DTO\InvoiceHeaderRequest;
+use DarkDarin\VkOrdSdk\DTO\InvoiceItems;
 use DarkDarin\VkOrdSdk\DTO\InvoiceList;
-use DarkDarin\VkOrdSdk\DTO\InvoiceHeaderV3;
-use DarkDarin\VkOrdSdk\DTO\InvoiceV3;
-use DarkDarin\VkOrdSdk\DTO\InvoiceV3Items;
+use DarkDarin\VkOrdSdk\DTO\InvoiceRequest;
+use DarkDarin\VkOrdSdk\DTO\KKTUItems;
+use DarkDarin\VkOrdSdk\DTO\KKTULangEnum;
 use DarkDarin\VkOrdSdk\DTO\Media;
 use DarkDarin\VkOrdSdk\DTO\MediaCheckSumInfo;
-use DarkDarin\VkOrdSdk\DTO\OkvedItems;
-use DarkDarin\VkOrdSdk\DTO\OkvedLangEnum;
 use DarkDarin\VkOrdSdk\DTO\Pad;
 use DarkDarin\VkOrdSdk\DTO\Person;
 use DarkDarin\VkOrdSdk\DTO\StatisticItems;
-use DarkDarin\VkOrdSdk\DTO\StatisticItemsCreated;
-use DarkDarin\VkOrdSdk\DTO\StatisticItemsV2;
-use DarkDarin\VkOrdSdk\DTO\WholeInvoice;
+use DarkDarin\VkOrdSdk\DTO\StatisticItemsRequest;
+use DarkDarin\VkOrdSdk\DTO\StatisticItemToDelete;
 use DarkDarin\VkOrdSdk\Exceptions\BadRequestException;
 use DarkDarin\VkOrdSdk\Exceptions\ConflictException;
 use DarkDarin\VkOrdSdk\Exceptions\ForbiddenException;
@@ -256,18 +262,18 @@ class VkOrd
     }
 
     /**
-     * Метод получает список внешних идентификаторов креативов.
+     * Метод получает список внешних идентификаторов креативов, отсортированный в лексикографическом порядке.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v1-get-creative-list
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v3-get-creative-list
      *
-     * @param int|null $offset Количество всех элементов, которые необходимо получить за один запрос
-     * @param int|null $limit Количество элементов выдачи, которые необходимо пропустить в запросе
-     * @return ExternalIdItems Информация о списке внешних идентификаторов креативов
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
+     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию - 100
+     * @return ExternalIdItems Информация о списке внешних идентификаторов креативов.
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      */
-    #[Get('/v1/creative')]
+    #[Get('/v3/creative')]
     public function getCreativeList(int $offset = null, int $limit = null): ExternalIdItems
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -276,7 +282,7 @@ class VkOrd
     /**
      * Метод получает список маркеров рекламы, отсортированный по внешнему идентификатору в лексикографическом порядке.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v1-get-creative-erids-list
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v3-get-creative-erids-list
      *
      * @param int|null $offset Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
      * @param int|null $limit Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
@@ -285,16 +291,17 @@ class VkOrd
      * @throws BadRequestException
      * @throws UnauthorizedException
      */
-    #[Get('v1/creative/list/erids')]
+    #[Get('v3/creative/list/erids')]
     public function getCreativeEridList(int $offset = null, int $limit = null): CreativeEridList
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 
     /**
-     * Метод получает список пар маркеров рекламы и внешних идентификаторов креативов, отсортированный по внешнему идентификатору в лексикографическом порядке.
+     * Метод получает список пар маркеров рекламы и внешних идентификаторов креативов, отсортированный по внешнему
+     * идентификатору в лексикографическом порядке.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v1-get-creative-list-erid-external-ids
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v3-get-creative-list-erid-external-ids
      *
      * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
      * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
@@ -303,7 +310,7 @@ class VkOrd
      * @throws BadRequestException
      * @throws UnauthorizedException
      */
-    #[Get('v1/creative/list/erid_external_ids')]
+    #[Get('v3/creative/list/erid_external_ids')]
     public function getCreativeEridExternalIdsList(int $offset = null, int $limit = null): CreativeEridExternalIdsList
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -314,26 +321,26 @@ class VkOrd
      * - Не существует, метод создаст креатив.
      * - Существует, метод обновит данные креатива.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v2-create-creative
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v3-create-creative
      *
      * @param string $external_id Внешний идентификатор креатива
-     * @param Creative $creative Данные креатива
+     * @param CreativeRequest $request Данные креатива
      * @return CreativeEridInfo Информация о маркировке креатива
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws NotFoundException Внешний идентификатор изначального договора не найден
      */
-    #[Put('/v2/creative/{external_id}', body: 'creative')]
-    public function setCreative(string $external_id, Creative $creative): CreativeEridInfo
+    #[Put('/v3/creative/{external_id}', body: 'request')]
+    public function setCreative(string $external_id, CreativeRequest $request): CreativeEridInfo
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 
     /**
-     * Метод получает данные креатива
+     * Метод получает данные креатива.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v2-get-creative
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v3-get-creative
      *
      * @param string $external_id Внешний идентификатор креатива
      * @return Creative Данные креатива
@@ -341,7 +348,7 @@ class VkOrd
      * @throws BadRequestException
      * @throws UnauthorizedException
      */
-    #[Get('/v2/creative/{external_id}')]
+    #[Get('/v3/creative/{external_id}')]
     public function getCreative(string $external_id): Creative
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -350,7 +357,7 @@ class VkOrd
     /**
      * Метод получает данные креатива по маркеру рекламы.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v2-get-creative-by-erid
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v3-get-creative-by-erid
      *
      * @param string $erid Маркер рекламы.
      * @return Creative Данные креатива
@@ -359,7 +366,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException
      */
-    #[Get('/v2/creative/by_erid/{erid}')]
+    #[Get('/v3/creative/by_erid/{erid}')]
     public function getCreativeByErid(string $erid): Creative
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -368,7 +375,7 @@ class VkOrd
     /**
      * Метод добавляет тексты в креатив.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v1-add-texts-to-creative
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v3-add-texts-to-creative
      *
      * @param string $external_id Внешний идентификатор креатива
      * @param list<string> $texts Список текстов креатива.
@@ -378,7 +385,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException
      */
-    #[Post('/v1/creative/{external_id}/add_text')]
+    #[Post('/v3/creative/{external_id}/add_text')]
     public function addTextToCreative(string $external_id, array $texts): CreativeEridInfo
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -387,7 +394,7 @@ class VkOrd
     /**
      * Метод добавляет медиафайлы в креатив.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/creative/v1-add-media-to-creative
+     * @link https://ord.vk.com/help/api/swagger/#/creative/v3-add-media-to-creative
      *
      * @param string $external_id Внешний идентификатор креатива
      * @param list<string> $media_external_ids Список внешних идентификаторов медиафайлов, используемых в креативе
@@ -397,7 +404,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws NotFoundException Внешние идентификаторы креатива или медиафайлов не найдены
      */
-    #[Post('/v1/creative/{external_id}/add_media')]
+    #[Post('/v3/creative/{external_id}/add_media')]
     public function addMediaToCreative(string $external_id, array $media_external_ids): CreativeEridInfo
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
@@ -485,7 +492,7 @@ class VkOrd
     /**
      * Метод получает список внешних идентификаторов актов, отсортированный в лексикографическом порядке.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-get-invoice-list
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-get-invoice-list
      *
      * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
      * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
@@ -494,134 +501,42 @@ class VkOrd
      * @throws BadRequestException
      * @throws UnauthorizedException
      */
-    #[Get('/v1/invoice')]
+    #[Get('/v4/invoice')]
     public function getInvoiceList(int $limit = null, int $offset = null): InvoiceList
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 
     /**
-     * Метод создаёт или обновляет данные акта с информацией о разаллокации по изначальным договорам.
-     * Изначальные договоры связаны с показами креативов на разных рекламных площадках.
-     * Если акт с переданным идентификатором:
-     * - Не существует, метод создаст акт.
-     * - Существует, метод обновит данные акта.
+     * Метод получает данные акта.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-create-whole-invoice
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-get-invoice
      *
-     * @param string $external_id Внешний идентификатор акта
-     * @param WholeInvoice $invoice Данные акта
-     * @return bool
+     * @param string $external_id Внешний идентификатор акта.
+     * @return Invoice
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
-     * @throws NotFoundException Изначальный договор в разаллокации не найден
      */
-    #[Put('/v1/invoice/{external_id}', body: 'invoice')]
-    public function setWholeInvoice(string $external_id, WholeInvoice $invoice): bool
+    #[Get('/v4/invoice/{external_id}')]
+    public function getInvoice(string $external_id): Invoice
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 
     /**
-     * Получить данные акта.
+     * Метод получает данные акта без разаллокаций.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v1-get-invoice
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-get-invoice-header
      *
-     * @param string $external_id Внешний идентификатор акта
-     * @return WholeInvoice Данные акта
+     * @param string $external_id Внешний идентификатор акта.
+     * @return InvoiceHeader
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      */
-    #[Get('/v1/invoice/{external_id}')]
-    public function getInvoice(string $external_id): WholeInvoice
-    {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод создаёт или обновляет данные акта без передачи информации о разаллокации по изначальным договорам.
-     * Изначальные договоры связаны с показами креативов на разных рекламных площадках.
-     * Если акт с переданным идентификатором:
-     * - Не существует, метод создаст акт.
-     * - Существует, метод обновит данные акта.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v2-create-invoice
-     *
-     * @param string $external_id Внешний идентификатор акта
-     * @param Invoice $invoice
-     * @return bool
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws NotFoundException Договор, к которому добавляется акт, не найден
-     */
-    #[Put('/v2/invoice/{external_id}/header', body: 'invoice')]
-    public function setInvoice(string $external_id, Invoice $invoice): bool
-    {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод удаляет изначальные договоры, креативы и рекламные площадки из акта.
-     * Чтобы отправить обновлённый акт в ЕРИР, вызовите метод Отправить акт в ЕРИР.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v2-delete-contracts-from-invoice
-     *
-     * @param string $external_id Внешний идентификатор акта
-     * @param list<InvoiceContractId> $items Данные изначальных договоров
-     * @return bool
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws NotFoundException
-     */
-    #[Post('/v2/invoice/{external_id}/delete', body: 'items')]
-    public function deleteContractsFromInvoice(string $external_id, array $items): bool
-    {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод добавляет информацию о разаллокации по изначальным договорам в акт.
-     * Изначальные договоры связаны с показами креативов на разных рекламных площадках.
-     * Чтобы отправить обновлённый акт в ЕРИР, вызовите метод Отправить акт в ЕРИР.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v2-add-contracts-to-invoice
-     *
-     * @param string $external_id Внешний идентификатор акта
-     * @param list<InvoiceContract> $items Список изначальных договоров в разаллокации.
-     * @return bool
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws NotFoundException Акт, изначальный договор в разаллокации, креатив или рекламная площадка не найдены
-     */
-    #[Patch('/v2/invoice/{external_id}/items', body: 'items')]
-    public function addContractsToInvoice(string $external_id, array $items): bool
-    {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     *  Метод отправляет акт в ЕРИР.
-     *  Вызов метода необходим, если вы создали акты или добавили в них данные с помощью методов:
-     *  - Создать акт.
-     *  - Добавить договоры в акт.
-     *  - Удалить договоры из акта.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v2-send-invoice-to-erir
-     *
-     * @param string $external_id Внешний идентификатор акта
-     * @return bool
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws NotFoundException
-     */
-    #[Post('/v2/invoice/{external_id}/ready')]
-    public function invoiceReady(string $external_id): bool
+    #[Get('/v4/invoice/{external_id}')]
+    public function getInvoiceHeader(string $external_id): InvoiceHeader
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -634,20 +549,20 @@ class VkOrd
      * * Не существует, метод создаст акт.
      * * Существует, метод обновит данные акта.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v3-create-whole-invoice
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-create-whole-invoice
      *
      * @param string $external_id Внешний идентификатор акта.
-     * @param InvoiceV3 $invoice Данные акта.
+     * @param InvoiceRequest $request Данные акта.
      * @param bool|null $draft Если передано значение true, создается акт-черновик, который не отправляется в ЕРИР
-     * @return bool
+     * @return InfoResponse
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ForbiddenException
      * @throws NotFoundException Изначальный договор в разаллокации не найден
      */
-    #[Put('/v3/invoice/{external_id}', body: 'invoice')]
-    public function setInvoiceV3(string $external_id, InvoiceV3 $invoice, ?bool $draft = null): bool
+    #[Put('/v4/invoice/{external_id}', body: 'request')]
+    public function setInvoice(string $external_id, InvoiceRequest $request, ?bool $draft = null): InfoResponse
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -664,10 +579,10 @@ class VkOrd
      *
      * Осторожно! Перед отправкой акта в ЕРИР обязательно проверьте корректность и полноту данных.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v3-create-invoice
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-create-invoice
      *
      * @param string $external_id Внешний идентификатор акта.
-     * @param InvoiceHeaderV3 $invoice Данные акта.
+     * @param InvoiceHeaderRequest $invoice Данные акта.
      * @return InfoResponse
      *
      * @throws BadRequestException
@@ -675,8 +590,8 @@ class VkOrd
      * @throws ForbiddenException
      * @throws NotFoundException Договор, к которому добавляется акт, не найден
      */
-    #[Put('/v3/invoice/{external_id}/header', body: 'invoice')]
-    public function setInvoiceHeaderV3(string $external_id, InvoiceHeaderV3 $invoice): InfoResponse
+    #[Put('/v4/invoice/{external_id}/header', body: 'invoice')]
+    public function setInvoiceHeader(string $external_id, InvoiceHeaderRequest $invoice): InfoResponse
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -688,10 +603,10 @@ class VkOrd
      * Чтобы отправить обновлённый акт в ЕРИР, вызовите метод "Отправить акт в ЕРИР".
      * Осторожно! Перед отправкой акта в ЕРИР обязательно проверьте корректность и полноту данных.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v3-add-contracts-to-invoice
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-add-contracts-to-invoice
      *
      * @param string $external_id Внешний идентификатор акта.
-     * @param InvoiceV3Items $items Список изначальных договоров в разаллокации.
+     * @param InvoiceItems $items Список изначальных договоров в разаллокации.
      * @return InfoResponse
      *
      * @throws BadRequestException
@@ -699,25 +614,50 @@ class VkOrd
      * @throws ForbiddenException
      * @throws NotFoundException Акт, изначальный договор в разаллокации, креатив или рекламная площадка не найдены
      */
-    #[Patch('/v3/invoice/{external_id}/items', body: 'items')]
-    public function addContractsToInvoiceV3(string $external_id, InvoiceV3Items $items): InfoResponse
+    #[Patch('/v4/invoice/{external_id}/items', body: 'items')]
+    public function addContractsToInvoice(string $external_id, InvoiceItems $items): InfoResponse
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 
     /**
-     * Метод получает данные акта.
+     * Метод удаляет изначальные договоры, креативы и рекламные площадки из акта.
+     * Чтобы отправить обновлённый акт в ЕРИР, вызовите метод "Отправить акт в ЕРИР".
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v3-get-invoice
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-delete-contracts-from-invoice
      *
-     * @param string $external_id Внешний идентификатор акта.
-     * @return InvoiceV3
+     * @param string $external_id Внешний идентификатор акта
+     * @param list<InvoiceContractId> $request Данные изначальных договоров
+     * @return InfoResponse
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
+     * @throws NotFoundException
      */
-    #[Get('/v3/invoice/{external_id}')]
-    public function getInvoiceV3(string $external_id): InvoiceV3
+    #[Post('/v4/invoice/{external_id}/delete', body: 'request')]
+    public function deleteContractsFromInvoice(string $external_id, array $request): InfoResponse
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     *  Метод отправляет акт в ЕРИР.
+     *  Вызов метода необходим, если вы создали акты или добавили в них данные с помощью методов:
+     *  - Создать акт
+     *  - Добавить договоры в акт
+     *  - Удалить договоры из акта
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-send-invoice-to-erir
+     *
+     * @param string $external_id Внешний идентификатор акта
+     * @return bool
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    #[Post('/v4/invoice/{external_id}/ready')]
+    public function invoiceReady(string $external_id): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -725,7 +665,7 @@ class VkOrd
     /**
      * Метод удаляет данные акта.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/invoice/v3-delete-invoice
+     * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-delete-invoice
      *
      * @param string $external_id Внешний идентификатор акта.
      * @return bool
@@ -733,8 +673,8 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws ForbiddenException
      */
-    #[Delete('/v3/invoice/{external_id}')]
-    public function deleteInvoiceV3(string $external_id): bool
+    #[Delete('/v4/invoice/{external_id}')]
+    public function deleteInvoice(string $external_id): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -743,7 +683,7 @@ class VkOrd
      * Метод получает список внешних идентификаторов статистик.
      * Query-параметры применяются как при операции логического «И».
      *
-     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-get-statistics-list
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v3-get-statistics-list
      *
      * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
      * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
@@ -756,7 +696,7 @@ class VkOrd
      * @throws UnauthorizedException
      * @throws InternalServerError
      */
-    #[Get('/v1/statistics/list')]
+    #[Get('/v3/statistics/list')]
     public function getStatisticsList(
         int $offset = null,
         int $limit = null,
@@ -770,17 +710,17 @@ class VkOrd
     /**
      * Метод создаёт или обновляет статистики, не связанные с актами.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-create-statistics
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v3-create-statistics
      *
-     * @param StatisticItems $items
-     * @return StatisticItemsCreated
+     * @param StatisticItemsRequest $request
+     * @return ExternalIds
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws InternalServerError
      */
-    #[Post('/v1/statistics', body: 'items')]
-    public function setStatistics(StatisticItems $items): StatisticItemsCreated
+    #[Post('/v3/statistics', body: 'request')]
+    public function setStatistics(StatisticItemsRequest $request): ExternalIds
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -788,9 +728,9 @@ class VkOrd
     /**
      * Метод удаляет статистики, не связанные с актами.
      *
-     * @link https://ord.vk.com/help/api/swagger/#/statistics/v1-delete-statistics
+     * @link https://ord.vk.com/help/api/swagger/#/statistics/v3-delete-statistics
      *
-     * @param StatisticItems $items
+     * @param StatisticItemToDelete $request
      * @return bool
      *
      * @throws BadRequestException
@@ -798,55 +738,8 @@ class VkOrd
      * @throws GoneException
      * @throws InternalServerError
      */
-    #[Post('/v1/statistics/delete', body: 'items')]
-    public function deleteStatistics(StatisticItems $items): bool
-    {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод получает список внешних идентификаторов статистик.
-     * Query-параметры применяются как при операции логического «И».
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/statistics/v2-get-statistics-list
-     *
-     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
-     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
-     * @param array|null $months Фильтрация по месяцам. Значение используется в формате YYYY-MM-01
-     * @param array|null $creative_external_ids Фильтрация по внешним идентификаторам креативов.
-     * @param string|null $pad_external_ids Фильтрация по внешнему идентификатору рекламной площадки.
-     * @return StatisticItemsV2
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws InternalServerError
-     */
-    #[Get('/v2/statistics/list')]
-    public function getStatisticsListV2(
-        int $offset = null,
-        int $limit = null,
-        array $months = null,
-        array $creative_external_ids = null,
-        string $pad_external_ids = null,
-    ): StatisticItemsV2 {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
-     * Метод создаёт или обновляет статистики, не связанные с актами.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/statistics/v2-create-statistics
-     *
-     * @param StatisticItemsV2 $items Данные статистик.
-     * @return StatisticItemsCreated
-     *
-     * @throws BadRequestException
-     * @throws UnauthorizedException
-     * @throws ConflictException
-     * @throws InternalServerError
-     */
-    #[Post('/v2/statistics', body: 'items')]
-    public function setStatisticsV2(StatisticItemsV2 $items): StatisticItemsCreated
+    #[Post('/v3/statistics/delete', body: 'request')]
+    public function deleteStatistics(StatisticItemToDelete $request): bool
     {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
@@ -926,40 +819,16 @@ class VkOrd
     }
 
     /**
-     * Метод получает коды ОКВЭД, которые поддерживаются в ОРД VK.
-     *
-     * @link https://ord.vk.com/help/api/swagger/#/dictionary/v1-get-okved-codes
-     *
-     * @param string|null $search Фраза, по которой фильтруется выдача запроса. Поиск выполняется в соответствии с языком, на котором описан код ОКВЭД
-     * @param OkvedLangEnum|null $lang Язык, на котором описан код ОКВЭД
-     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе
-     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос
-     * @return OkvedItems
-     *
-     * @throws BadRequestException
-     * @throws InternalServerError
-     */
-    #[Get('/v1/dict/okved')]
-    public function getOkvedDictionary(
-        string $search = null,
-        OkvedLangEnum $lang = null,
-        int $offset = null,
-        int $limit = null,
-    ): OkvedItems {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
-    }
-
-    /**
      * Метод отдает коды ККТУ, которые поддерживаются в ОРД VK. В отличие от ОКВЭД поддерживается параметр codes - фильтрация по кодам.
      *
      * @link https://ord.vk.com/help/api/swagger/#/dictionary/v1-get-kktu-codes
      *
      * @param string|null $search Фраза, по которой фильтруется выдача запроса. Поиск выполняется в соответствии с языком, на котором описан код ККТУ
-     * @param OkvedLangEnum|null $lang Язык, на котором описан код ККТУ
+     * @param KKTULangEnum|null $lang Язык, на котором описан код ККТУ
      * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе
      * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос
      * @param string|null $codes Коды ККТУ, перечисленные через запятую
-     * @return OkvedItems
+     * @return KKTUItems
      *
      * @throws BadRequestException
      * @throws InternalServerError
@@ -967,11 +836,95 @@ class VkOrd
     #[Get('/v1/dict/kktu')]
     public function getKktuDictionary(
         string $search = null,
-        OkvedLangEnum $lang = null,
+        KKTULangEnum $lang = null,
         int $offset = null,
         int $limit = null,
         string $codes = null,
-    ): OkvedItems {
+    ): KKTUItems {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод отдает перевод ошибки ЕРИР, которая поддерживается в ОРД VK.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/dictionary/v1-get-erir-message
+     * @param string $message Ошибка от ЕРИР, перевод которой требуется получить.
+     * @param ErirLangEnum|null $lang Язык, на котором требуется получить перевод ошибки.
+     * @return ErirMessages
+     *
+     * @throws BadRequestException
+     */
+    #[Get('/v1/dict/erir_message')]
+    public function getErirMessage(string $message, ?ErirLangEnum $lang = null): ErirMessages
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод отдает перевод ошибки ЕРИР, которая поддерживается в ОРД VK.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/dictionary/v1-get-erir-message
+     * @param list<string> $messages Список сообщений об ошибках от ЕРИР, перевод которых требуется получить.
+     * @param ErirLangEnum|null $lang Язык, на котором требуется получить перевод ошибки.
+     * @return ErirMessages
+     *
+     * @throws BadRequestException
+     */
+    #[Post('/v1/dict/erir_message', body: 'messages')]
+    public function getErirMessages(array $messages, ?ErirLangEnum $lang = null): ErirMessages
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод получает список внешних cid, отсортированный в лексикографическом порядке.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/cid/v1-get-cid-list
+     * @param int|null $offset Количество элементов выдачи, которые необходимо пропустить в запросе. Значение по умолчанию — 0
+     * @param int|null $limit Количество всех элементов, которые необходимо получить за один запрос. Значение по умолчанию — 100
+     * @return CidItems
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     */
+    #[Get('/v1/cid')]
+    public function getCidList(int $offset = null, int $limit = null): CidItems
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод создаёт или обновляет данные внешнего cid.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/cid/v1-create-external-cid
+     * @param string $cid_value Идентификатор внешнего cid в формате UUID.
+     * @param CidRequest $request
+     * @return bool
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws ConflictException
+     */
+    #[Put('/v1/cid/{cid_value}', body: 'request')]
+    public function setCid(string $cid_value, CidRequest $request): bool
+    {
+        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+    }
+
+    /**
+     * Метод получает данные внешнего cid.
+     *
+     * @link https://ord.vk.com/help/api/swagger/#/cid/v1-get-cid
+     * @param string $cid_value Идентификатор внешнего cid в формате UUID.
+     * @return Cid
+     *
+     * @throws BadRequestException
+     * @throws UnauthorizedException
+     * @throws NotFoundException
+     */
+    #[Get('/v1/cid/{cid_value}')]
+    public function getCid(string $cid_value): Cid
+    {
         return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
     }
 }
