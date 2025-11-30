@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class InvoiceItem
+/**
+ * @api
+ */
+final readonly class InvoiceItem
 {
     /**
      * @param Amount|null $amount

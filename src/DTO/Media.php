@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Информация о медиафайле
+ * @api
  */
-readonly class Media
+final readonly class Media
 {
     /**
      * @param string $filename Имя медиафайла

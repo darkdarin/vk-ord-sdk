@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class Info
+/**
+ * @api
+ */
+final readonly class Info
 {
     /**
      * @param string|null $message

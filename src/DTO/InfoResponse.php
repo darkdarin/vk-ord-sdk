@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class InfoResponse
+/**
+ * @api
+ */
+final readonly class InfoResponse
 {
     /**
      * @param list<Info> $info

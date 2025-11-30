@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class StatisticItemToDelete
+/**
+ * @api
+ */
+final readonly class StatisticItemToDelete
 {
     /**
      * @param string|null $creative_external_id Внешний идентификатор креатива.

@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Объект рекламы с информацией о статусах
+ * @api
  */
-readonly class ErirStatus
+final readonly class ErirStatus
 {
     /**
      * @param ErirStatusEnum $erir_status Статус обработки объекта по работе с рекламой от ЕРИР

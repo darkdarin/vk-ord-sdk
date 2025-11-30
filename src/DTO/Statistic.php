@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Данные статистик
+ * @api
  */
-readonly class Statistic
+final readonly class Statistic
 {
     /**
      * @param string $external_id Внешний идентификатор статистики.

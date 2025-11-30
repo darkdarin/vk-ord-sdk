@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class Creative
+/**
+ * @api
+ */
+final readonly class Creative
 {
     /**
      * @param string $erid Токен маркировки креатива.

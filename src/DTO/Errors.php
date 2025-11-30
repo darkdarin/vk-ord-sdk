@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class Errors
+/**
+ * @api
+ */
+final readonly class Errors
 {
     /**
      * @param list<Error> $items

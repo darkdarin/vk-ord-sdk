@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Информация о маркировке креатива
+ * @api
  */
-readonly class CreativeEridInfo
+final readonly class CreativeEridInfo
 {
     /**
      * @param string $erid Токен маркировки креатива

@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class InvoiceItemCreative
+/**
+ * @api
+ */
+final readonly class InvoiceItemCreative
 {
     /**
      * @param string|null $creative_external_id

@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class StatisticRequest
+/**
+ * @api
+ */
+final readonly class StatisticRequest
 {
     /**
      * @param string $creative_external_id Внешний идентификатор креатива.

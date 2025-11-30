@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class Cid
+/**
+ * @api
+ */
+final readonly class Cid
 {
     /**
      * @param string $cid Идентификатор внешнего cid в формате UUID.

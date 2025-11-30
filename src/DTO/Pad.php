@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Данные рекламной площадки
+ * @api
  */
-readonly class Pad
+final readonly class Pad
 {
     /**
      * @param string $person_external_id Внешний идентификатор контрагента, связанного с рекламной площадкой

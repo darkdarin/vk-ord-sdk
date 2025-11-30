@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Данные креатива
+ * @api
  */
-readonly class InvoiceCreativeId
+final readonly class InvoiceCreativeId
 {
     /**
      * @param string $creative_external_id Внешний идентификатор креатива

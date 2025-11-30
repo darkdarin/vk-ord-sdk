@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Данные контрагента
+ * @api
  */
-readonly class Person
+final readonly class Person
 {
     /**
      * @param string $name Наименование контрагента. Для организации указывается юридическое наименование, для физического лица и индивидуального предпринимателя — ФИО

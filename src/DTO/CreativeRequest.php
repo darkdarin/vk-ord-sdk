@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class CreativeRequest
+/**
+ * @api
+ */
+final readonly class CreativeRequest
 {
     /**
      * @param list<string> $kktus Список кодов ККТУ креатива. Для обычных креативов требуется 1 элемент, для кобрендинговых от 1 до 16.

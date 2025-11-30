@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class CommonMessageItem
+/**
+ * @api
+ */
+final readonly class CommonMessageItem
 {
     /**
      * @param string|null $text Текст сообщения

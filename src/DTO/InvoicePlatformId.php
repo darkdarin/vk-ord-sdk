@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Информация о рекламных площадках
+ * @api
  */
-readonly class InvoicePlatformId
+final readonly class InvoicePlatformId
 {
     /**
      * @param string $pad_external_id Внешний идентификатор рекламной площадки

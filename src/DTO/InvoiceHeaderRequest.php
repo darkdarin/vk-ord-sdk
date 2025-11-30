@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class InvoiceHeaderRequest
+/**
+ * @api
+ */
+final readonly class InvoiceHeaderRequest
 {
     /**
      * @param string $contract_external_id Внешний идентификатор договора, к которому добавляется акт

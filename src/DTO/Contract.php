@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Данные договора
+ * @api
  */
-readonly class Contract
+final readonly class Contract
 {
     /**
      * @param ContractTypeEnum $type Тип договора

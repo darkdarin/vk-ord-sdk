@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Информация о списке внешних cid.
+ * @api
  */
-readonly class CidItems
+final readonly class CidItems
 {
     /**
      * @param list<string>|null $cids Список внешних cid, отсортированный в лексикографическом порядке.

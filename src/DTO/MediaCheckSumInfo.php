@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Информация о контрольной сумме медиафайла
+ * @api
  */
-readonly class MediaCheckSumInfo
+final readonly class MediaCheckSumInfo
 {
     /**
      * @param string $sha256 Хеш SHA256 медиафайла

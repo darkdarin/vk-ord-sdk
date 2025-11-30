@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Данные изначального договора в разаллокации
+ * @api
  */
-readonly class InvoiceContractId
+final readonly class InvoiceContractId
 {
     /**
      * @param string|null $contract_external_id Внешний идентификатор изначального договора

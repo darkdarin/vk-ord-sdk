@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class Error
+/**
+ * @api
+ */
+final readonly class Error
 {
     public function __construct(
         public string $error,

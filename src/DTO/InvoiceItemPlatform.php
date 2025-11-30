@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class InvoiceItemPlatform
+/**
+ * @api
+ */
+final readonly class InvoiceItemPlatform
 {
     /**
      * @param Amount $amount Cумма, потраченная на показ креатива на рекламной площадке.

@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class CreativeEridList
+/**
+ * @api
+ */
+final readonly class CreativeEridList
 {
     /**
      * @param list<string>|null $erids Список маркеров рекламы, отсортированный в лексикографическом порядке.

@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class ErirMessage
+/**
+ * @api
+ */
+final readonly class ErirMessage
 {
     /**
      * @param string $message Сообщение об ошибке от ЕРИР

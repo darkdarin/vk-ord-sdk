@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Код ККТУ
+ * @api
  */
-readonly class KKTU
+final readonly class KKTU
 {
     /**
      * @param string $code Код ККТУ.

@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class InvoiceItems
+/**
+ * @api
+ */
+final readonly class InvoiceItems
 {
     /**
      * @param list<InvoiceItem> $items Список изначальных договоров в разаллокации

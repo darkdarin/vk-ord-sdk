@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class Amount
+/**
+ * @api
+ */
+final readonly class Amount
 {
     /**
      * @param string $excluding_vat Неотрицательная сумма в рублях с копейками без учета налогов.

@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Список объектов по работе с рекламой со статусами обработки от ЕРИР
+ * @api
  */
-readonly class ErirStatusItems
+final readonly class ErirStatusItems
 {
     /**
      * @param int $total_items_count Общее количество элементов для выдачи по запросу

@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Результат запроса получения ККТУ
+ * @api
  */
-readonly class KKTUItems
+final readonly class KKTUItems
 {
     /**
      * @param int $total_items_count Общее количество элементов для выдачи по запросу.

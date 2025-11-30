@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class ErirMessages
+/**
+ * @api
+ */
+final readonly class ErirMessages
 {
     /**
      * @param list<ErirMessage> $items Список сообщений об ошибках от ЕРИР с их переводом на запрошенный язык.

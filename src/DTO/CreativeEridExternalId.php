@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class CreativeEridExternalId
+/**
+ * @api
+ */
+final readonly class CreativeEridExternalId
 {
     /**
      * @param string $erid Маркер рекламы

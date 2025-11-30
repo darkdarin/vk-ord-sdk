@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class CidRequest
+/**
+ * @api
+ */
+final readonly class CidRequest
 {
     /**
      * @param string $name Название cid.

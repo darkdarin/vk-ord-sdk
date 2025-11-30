@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class InvoiceList
+/**
+ * @api
+ */
+final readonly class InvoiceList
 {
     /**
      * @param list<string>|null $external_ids Список внешних идентификаторов актов, отсортированный в лексикографическом порядке.

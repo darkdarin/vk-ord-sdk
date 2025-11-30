@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class CreativeEridExternalIdsList
+/**
+ * @api
+ */
+final readonly class CreativeEridExternalIdsList
 {
     /**
      * @param list<CreativeEridExternalId>|null $items Список пар маркеров рекламы и внешних идентификаторов креативов, отсортированный по внешнему идентификатору в лексикографическом порядке.

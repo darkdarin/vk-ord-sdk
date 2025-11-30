@@ -2,11 +2,22 @@
 
 namespace DarkDarin\VkOrdSdk;
 
-use DarkDarin\VkOrdSdk\Attributes\Delete;
-use DarkDarin\VkOrdSdk\Attributes\Get;
-use DarkDarin\VkOrdSdk\Attributes\Patch;
-use DarkDarin\VkOrdSdk\Attributes\Post;
-use DarkDarin\VkOrdSdk\Attributes\Put;
+use Argo\EntityDefinition\Reflector\MethodDefinition\MethodDefinitionReflectorInterface;
+use Argo\RestClient\Attributes\Delete;
+use Argo\RestClient\Attributes\Get;
+use Argo\RestClient\Attributes\Patch;
+use Argo\RestClient\Attributes\Post;
+use Argo\RestClient\Attributes\Put;
+use Argo\RestClient\Exception\BadRequestException;
+use Argo\RestClient\Exception\ConflictException;
+use Argo\RestClient\Exception\ForbiddenException;
+use Argo\RestClient\Exception\GoneException;
+use Argo\RestClient\Exception\InternalServerError;
+use Argo\RestClient\Exception\NotFoundException;
+use Argo\RestClient\Exception\UnauthorizedException;
+use Argo\RestClient\RestClient;
+use Argo\RestClient\RestClientInterface;
+use DarkDarin\VkOrdSdk\Attribute\MultipartRequest;
 use DarkDarin\VkOrdSdk\DTO\Cid;
 use DarkDarin\VkOrdSdk\DTO\CidItems;
 use DarkDarin\VkOrdSdk\DTO\CidRequest;
@@ -41,36 +52,44 @@ use DarkDarin\VkOrdSdk\DTO\Person;
 use DarkDarin\VkOrdSdk\DTO\StatisticItems;
 use DarkDarin\VkOrdSdk\DTO\StatisticItemsRequest;
 use DarkDarin\VkOrdSdk\DTO\StatisticItemToDelete;
-use DarkDarin\VkOrdSdk\Exceptions\BadRequestException;
-use DarkDarin\VkOrdSdk\Exceptions\ConflictException;
-use DarkDarin\VkOrdSdk\Exceptions\ForbiddenException;
-use DarkDarin\VkOrdSdk\Exceptions\GoneException;
-use DarkDarin\VkOrdSdk\Exceptions\InternalServerError;
-use DarkDarin\VkOrdSdk\Exceptions\NotFoundException;
-use DarkDarin\VkOrdSdk\Exceptions\UnauthorizedException;
-use DarkDarin\VkOrdSdk\TransportClient\TransportClientInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
  * @api
+ * @psalm-suppress NoValue
  */
-class VkOrd
+readonly class VkOrd
 {
+    private RestClientInterface $client;
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __construct(
-        private string $url,
-        private string $token,
-        private readonly TransportClientInterface $client,
-    ) {}
+        private VkOrdRequestFactoryInterface $requestFactory,
+        ContainerInterface $container,
+    ) {
+        $this->client = new RestClient(
+            $this->requestFactory,
+            $container->get(ClientInterface::class),
+            $container->get(MethodDefinitionReflectorInterface::class),
+        );
+    }
 
     public function withUrl(string $url): self
     {
-        $this->url = $url;
+        $this->requestFactory->setUrl($url);
         return $this;
     }
 
     public function withToken(string $token): self
     {
-        $this->token = $token;
+        $this->requestFactory->setToken($token);
         return $this;
     }
 
@@ -89,7 +108,7 @@ class VkOrd
     #[Get('/v1/person')]
     public function getPersonList(int $offset = null, int $limit = null): ExternalIdItems
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -99,16 +118,16 @@ class VkOrd
      *
      * @param string $external_id Внешний идентификатор контрагента
      * @param Person $person Данные контрагента
-     * @return bool
+     * @return bool|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ConflictException
      */
     #[Put('/v1/person/{external_id}', body: 'person')]
-    public function setPerson(string $external_id, Person $person): bool
+    public function setPerson(string $external_id, Person $person): ?bool
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -125,7 +144,7 @@ class VkOrd
     #[Get('/v1/person/{external_id}')]
     public function getPerson(string $external_id): Person
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -143,7 +162,7 @@ class VkOrd
     #[Get('/v1/contract')]
     public function getContractList(int $offset = null, int $limit = null): ExternalIdItems
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -155,7 +174,7 @@ class VkOrd
      *
      * @param string $external_id Внешний идентификатор договора
      * @param Contract $contract Данные договора
-     * @return bool
+     * @return bool|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
@@ -163,9 +182,9 @@ class VkOrd
      * @throws ConflictException
      */
     #[Put('/v1/contract/{external_id}', body: 'contract')]
-    public function setContract(string $external_id, Contract $contract): bool
+    public function setContract(string $external_id, Contract $contract): ?bool
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -183,7 +202,7 @@ class VkOrd
     #[Get('/v1/contract/{external_id}')]
     public function getContract(string $external_id): Contract
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -201,7 +220,7 @@ class VkOrd
     #[Get('/v1/pad')]
     public function getPadList(int $offset = null, int $limit = null): ExternalIdItems
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -219,7 +238,7 @@ class VkOrd
     #[Get('/v1/pad/info/restricted')]
     public function getPadInfoRestricted(): array
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -231,16 +250,16 @@ class VkOrd
      *
      * @param string $external_id Внешний идентификатор рекламной площадки
      * @param Pad $pad Данные рекламной площадки
-     * @return bool
+     * @return bool|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws NotFoundException Владелец рекламной площадки не найден
      */
     #[Put('/v1/pad/{external_id}', body: 'pad')]
-    public function setPad(string $external_id, Pad $pad): bool
+    public function setPad(string $external_id, Pad $pad): ?bool
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -258,7 +277,7 @@ class VkOrd
     #[Get('/v1/pad/{external_id}')]
     public function getPad(string $external_id): Pad
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -276,7 +295,7 @@ class VkOrd
     #[Get('/v3/creative')]
     public function getCreativeList(int $offset = null, int $limit = null): ExternalIdItems
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -294,7 +313,7 @@ class VkOrd
     #[Get('v3/creative/list/erids')]
     public function getCreativeEridList(int $offset = null, int $limit = null): CreativeEridList
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -313,7 +332,7 @@ class VkOrd
     #[Get('v3/creative/list/erid_external_ids')]
     public function getCreativeEridExternalIdsList(int $offset = null, int $limit = null): CreativeEridExternalIdsList
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -334,7 +353,7 @@ class VkOrd
     #[Put('/v3/creative/{external_id}', body: 'request')]
     public function setCreative(string $external_id, CreativeRequest $request): CreativeEridInfo
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -351,7 +370,7 @@ class VkOrd
     #[Get('/v3/creative/{external_id}')]
     public function getCreative(string $external_id): Creative
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -369,7 +388,7 @@ class VkOrd
     #[Get('/v3/creative/by_erid/{erid}')]
     public function getCreativeByErid(string $erid): Creative
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -388,7 +407,7 @@ class VkOrd
     #[Post('/v3/creative/{external_id}/add_text')]
     public function addTextToCreative(string $external_id, array $texts): CreativeEridInfo
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -407,7 +426,7 @@ class VkOrd
     #[Post('/v3/creative/{external_id}/add_media')]
     public function addMediaToCreative(string $external_id, array $media_external_ids): CreativeEridInfo
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -426,7 +445,7 @@ class VkOrd
     #[Get('/v1/media')]
     public function getMediaList(int $offset = null, int $limit = null): ExternalIdItems
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -445,12 +464,13 @@ class VkOrd
      * @throws ConflictException Медиафайл с переданным external_id существует
      */
     #[Put('/v1/media/{external_id}')]
+    #[MultipartRequest]
     public function uploadMedia(
         string $external_id,
         StreamInterface $media_file,
         string $description,
     ): MediaCheckSumInfo {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args(), true);
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -468,7 +488,7 @@ class VkOrd
     #[Get('/v1/media/{external_id}')]
     public function getMedia(string $external_id): StreamInterface
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -486,7 +506,7 @@ class VkOrd
     #[Get('/v1/media/{external_id}/info')]
     public function getMediaInfo(string $external_id): Media
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -504,7 +524,7 @@ class VkOrd
     #[Get('/v4/invoice')]
     public function getInvoiceList(int $limit = null, int $offset = null): InvoiceList
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -521,7 +541,7 @@ class VkOrd
     #[Get('/v4/invoice/{external_id}')]
     public function getInvoice(string $external_id): Invoice
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -538,7 +558,7 @@ class VkOrd
     #[Get('/v4/invoice/{external_id}')]
     public function getInvoiceHeader(string $external_id): InvoiceHeader
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -554,7 +574,7 @@ class VkOrd
      * @param string $external_id Внешний идентификатор акта.
      * @param InvoiceRequest $request Данные акта.
      * @param bool|null $draft Если передано значение true, создается акт-черновик, который не отправляется в ЕРИР
-     * @return InfoResponse
+     * @return InfoResponse|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
@@ -562,9 +582,9 @@ class VkOrd
      * @throws NotFoundException Изначальный договор в разаллокации не найден
      */
     #[Put('/v4/invoice/{external_id}', body: 'request')]
-    public function setInvoice(string $external_id, InvoiceRequest $request, ?bool $draft = null): InfoResponse
+    public function setInvoice(string $external_id, InvoiceRequest $request, ?bool $draft = null): ?InfoResponse
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -583,7 +603,7 @@ class VkOrd
      *
      * @param string $external_id Внешний идентификатор акта.
      * @param InvoiceHeaderRequest $invoice Данные акта.
-     * @return InfoResponse
+     * @return InfoResponse|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
@@ -591,9 +611,9 @@ class VkOrd
      * @throws NotFoundException Договор, к которому добавляется акт, не найден
      */
     #[Put('/v4/invoice/{external_id}/header', body: 'invoice')]
-    public function setInvoiceHeader(string $external_id, InvoiceHeaderRequest $invoice): InfoResponse
+    public function setInvoiceHeader(string $external_id, InvoiceHeaderRequest $invoice): ?InfoResponse
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -607,7 +627,7 @@ class VkOrd
      *
      * @param string $external_id Внешний идентификатор акта.
      * @param InvoiceItems $items Список изначальных договоров в разаллокации.
-     * @return InfoResponse
+     * @return InfoResponse|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
@@ -615,9 +635,9 @@ class VkOrd
      * @throws NotFoundException Акт, изначальный договор в разаллокации, креатив или рекламная площадка не найдены
      */
     #[Patch('/v4/invoice/{external_id}/items', body: 'items')]
-    public function addContractsToInvoice(string $external_id, InvoiceItems $items): InfoResponse
+    public function addContractsToInvoice(string $external_id, InvoiceItems $items): ?InfoResponse
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -628,16 +648,16 @@ class VkOrd
      *
      * @param string $external_id Внешний идентификатор акта
      * @param list<InvoiceContractId> $request Данные изначальных договоров
-     * @return InfoResponse
+     * @return InfoResponse|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws NotFoundException
      */
     #[Post('/v4/invoice/{external_id}/delete', body: 'request')]
-    public function deleteContractsFromInvoice(string $external_id, array $request): InfoResponse
+    public function deleteContractsFromInvoice(string $external_id, array $request): ?InfoResponse
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -650,16 +670,16 @@ class VkOrd
      * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-send-invoice-to-erir
      *
      * @param string $external_id Внешний идентификатор акта
-     * @return bool
+     * @return bool|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws NotFoundException
      */
     #[Post('/v4/invoice/{external_id}/ready')]
-    public function invoiceReady(string $external_id): bool
+    public function invoiceReady(string $external_id): ?bool
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -668,15 +688,15 @@ class VkOrd
      * @link https://ord.vk.com/help/api/swagger/#/invoice/v4-delete-invoice
      *
      * @param string $external_id Внешний идентификатор акта.
-     * @return bool
+     * @return bool|null
      *
      * @throws UnauthorizedException
      * @throws ForbiddenException
      */
     #[Delete('/v4/invoice/{external_id}')]
-    public function deleteInvoice(string $external_id): bool
+    public function deleteInvoice(string $external_id): ?bool
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -704,7 +724,7 @@ class VkOrd
         array $creative_external_ids = null,
         string $pad_external_ids = null,
     ): StatisticItems {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -722,7 +742,7 @@ class VkOrd
     #[Post('/v3/statistics', body: 'request')]
     public function setStatistics(StatisticItemsRequest $request): ExternalIds
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -731,7 +751,7 @@ class VkOrd
      * @link https://ord.vk.com/help/api/swagger/#/statistics/v3-delete-statistics
      *
      * @param StatisticItemToDelete $request
-     * @return bool
+     * @return bool|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
@@ -739,9 +759,9 @@ class VkOrd
      * @throws InternalServerError
      */
     #[Post('/v3/statistics/delete', body: 'request')]
-    public function deleteStatistics(StatisticItemToDelete $request): bool
+    public function deleteStatistics(StatisticItemToDelete $request): ?bool
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -759,7 +779,7 @@ class VkOrd
     #[Get('/v1/{data_type}/{external_id}/erir_status')]
     public function getErirStatus(ErirDataTypeEnum $data_type, string $external_id): ErirStatus
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -787,7 +807,7 @@ class VkOrd
         int $limit_per_entity = null,
         array $external_id = null,
     ): ErirStatusItems {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -815,7 +835,7 @@ class VkOrd
         int $limit = null,
         int $limit_per_entity = null,
     ): ErirStatusItems {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -841,7 +861,7 @@ class VkOrd
         int $limit = null,
         string $codes = null,
     ): KKTUItems {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -857,7 +877,7 @@ class VkOrd
     #[Get('/v1/dict/erir_message')]
     public function getErirMessage(string $message, ?ErirLangEnum $lang = null): ErirMessages
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -873,7 +893,7 @@ class VkOrd
     #[Post('/v1/dict/erir_message', body: 'messages')]
     public function getErirMessages(array $messages, ?ErirLangEnum $lang = null): ErirMessages
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -890,7 +910,7 @@ class VkOrd
     #[Get('/v1/cid')]
     public function getCidList(int $offset = null, int $limit = null): CidItems
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -899,16 +919,16 @@ class VkOrd
      * @link https://ord.vk.com/help/api/swagger/#/cid/v1-create-external-cid
      * @param string $cid_value Идентификатор внешнего cid в формате UUID.
      * @param CidRequest $request
-     * @return bool
+     * @return bool|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ConflictException
      */
     #[Put('/v1/cid/{cid_value}', body: 'request')]
-    public function setCid(string $cid_value, CidRequest $request): bool
+    public function setCid(string $cid_value, CidRequest $request): ?bool
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 
     /**
@@ -925,6 +945,6 @@ class VkOrd
     #[Get('/v1/cid/{cid_value}')]
     public function getCid(string $cid_value): Cid
     {
-        return $this->client->send($this->url, $this->token, __METHOD__, func_get_args());
+        return $this->client->send(__METHOD__, func_get_args());
     }
 }

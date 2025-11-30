@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class StatisticItems
+/**
+ * @api
+ */
+final readonly class StatisticItems
 {
     /**
      * @param list<Statistic>|null $items Элементы статистики

@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class InvoiceAmount
+/**
+ * @api
+ */
+final readonly class InvoiceAmount
 {
     /**
      * @param Amount $services Информация о сумме за сервисы.

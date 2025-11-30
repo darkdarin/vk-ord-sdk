@@ -2,7 +2,10 @@
 
 namespace DarkDarin\VkOrdSdk\DTO;
 
-readonly class CommonMessageItemField
+/**
+ * @api
+ */
+final readonly class CommonMessageItemField
 {
     /**
      * @param string|null $field Имя поля

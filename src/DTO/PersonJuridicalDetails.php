@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Реквизиты контрагента
+ * @api
  */
-readonly class PersonJuridicalDetails
+final readonly class PersonJuridicalDetails
 {
     /**
      * @param PersonTypeEnum $type Тип контрагента

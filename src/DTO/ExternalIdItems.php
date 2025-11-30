@@ -4,8 +4,9 @@ namespace DarkDarin\VkOrdSdk\DTO;
 
 /**
  * Информация о списке внешних идентификаторов
+ * @api
  */
-readonly class ExternalIdItems
+final readonly class ExternalIdItems
 {
     /**
      * @param array<string> $external_ids Список внешних идентификаторов, отсортированный в лексикографическом порядке.
