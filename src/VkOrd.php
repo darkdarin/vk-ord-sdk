@@ -52,9 +52,6 @@ use DarkDarin\VkOrdSdk\DTO\Person;
 use DarkDarin\VkOrdSdk\DTO\StatisticItems;
 use DarkDarin\VkOrdSdk\DTO\StatisticItemsRequest;
 use DarkDarin\VkOrdSdk\DTO\StatisticItemToDelete;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -66,19 +63,12 @@ readonly class VkOrd
 {
     private RestClientInterface $client;
 
-    /**
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
     public function __construct(
         private VkOrdRequestFactoryInterface $requestFactory,
-        ContainerInterface $container,
+        ClientInterface $client,
+        MethodDefinitionReflectorInterface $methodReflector,
     ) {
-        $this->client = new RestClient(
-            $this->requestFactory,
-            $container->get(ClientInterface::class),
-            $container->get(MethodDefinitionReflectorInterface::class),
-        );
+        $this->client = new RestClient($this->requestFactory, $client, $methodReflector);
     }
 
     public function withUrl(string $url): self
