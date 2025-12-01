@@ -21,6 +21,7 @@ use DarkDarin\VkOrdSdk\Attribute\MultipartRequest;
 use DarkDarin\VkOrdSdk\DTO\Cid;
 use DarkDarin\VkOrdSdk\DTO\CidItems;
 use DarkDarin\VkOrdSdk\DTO\CidRequest;
+use DarkDarin\VkOrdSdk\DTO\CommonMessagesResponse;
 use DarkDarin\VkOrdSdk\DTO\Contract;
 use DarkDarin\VkOrdSdk\DTO\Creative;
 use DarkDarin\VkOrdSdk\DTO\CreativeEridExternalIdsList;
@@ -108,14 +109,14 @@ readonly class VkOrd
      *
      * @param string $external_id Внешний идентификатор контрагента
      * @param Person $person Данные контрагента
-     * @return bool|null
+     * @return CommonMessagesResponse|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws ConflictException
      */
     #[Put('/v1/person/{external_id}', body: 'person')]
-    public function setPerson(string $external_id, Person $person): ?bool
+    public function setPerson(string $external_id, Person $person): ?CommonMessagesResponse
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -164,7 +165,7 @@ readonly class VkOrd
      *
      * @param string $external_id Внешний идентификатор договора
      * @param Contract $contract Данные договора
-     * @return bool|null
+     * @return CommonMessagesResponse|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
@@ -172,7 +173,7 @@ readonly class VkOrd
      * @throws ConflictException
      */
     #[Put('/v1/contract/{external_id}', body: 'contract')]
-    public function setContract(string $external_id, Contract $contract): ?bool
+    public function setContract(string $external_id, Contract $contract): ?CommonMessagesResponse
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -240,14 +241,14 @@ readonly class VkOrd
      *
      * @param string $external_id Внешний идентификатор рекламной площадки
      * @param Pad $pad Данные рекламной площадки
-     * @return bool|null
+     * @return CommonMessagesResponse|null
      *
      * @throws BadRequestException
      * @throws UnauthorizedException
      * @throws NotFoundException Владелец рекламной площадки не найден
      */
     #[Put('/v1/pad/{external_id}', body: 'pad')]
-    public function setPad(string $external_id, Pad $pad): ?bool
+    public function setPad(string $external_id, Pad $pad): ?CommonMessagesResponse
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
