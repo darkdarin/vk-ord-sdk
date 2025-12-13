@@ -12,6 +12,5 @@ final readonly class CommonMessagesResponse
      */
     public function __construct(
         public ?array $messages = null,
-    ) {
-    }
+    ) {}
 }

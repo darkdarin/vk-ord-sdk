@@ -97,14 +97,14 @@ class VkOrdRequestFactory extends RestRequestFactory implements VkOrdRequestFact
         }
 
         throw match ($response->getStatusCode()) {
-            400 => new BadRequestException($error, $response->getStatusCode()),
-            401 => new UnauthorizedException($error, $response->getStatusCode()),
-            403 => new ForbiddenException($error, $response->getStatusCode()),
-            404 => new NotFoundException($error, $response->getStatusCode()),
-            409 => new ConflictException($error, $response->getStatusCode()),
-            410 => new GoneException($error, $response->getStatusCode()),
-            500 => new InternalServerError($error, $response->getStatusCode()),
-            default => new VkOrdException($error, $response->getStatusCode()),
+            400 => new BadRequestException($error, $response),
+            401 => new UnauthorizedException($error, $response),
+            403 => new ForbiddenException($error, $response),
+            404 => new NotFoundException($error, $response),
+            409 => new ConflictException($error, $response),
+            410 => new GoneException($error, $response),
+            500 => new InternalServerError($error, $response),
+            default => new VkOrdException($error, $response),
         };
     }
 }

@@ -2,20 +2,21 @@
 
 namespace DarkDarin\VkOrdSdk\Exceptions;
 
-use Argo\RestClient\Exception\ClientException;
+use Argo\RestClient\Exception\RestException;
 use DarkDarin\VkOrdSdk\DTO\Error;
 use DarkDarin\VkOrdSdk\DTO\Errors;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @api
  */
-class VkOrdException extends ClientException
+class VkOrdException extends RestException
 {
     public function __construct(
         private readonly Errors|Error $errors,
-        int $responseCode,
+        ResponseInterface $response,
     ) {
-        parent::__construct((string) $this->errors, $responseCode);
+        parent::__construct($response);
     }
 
     public function getErrors(): Error|Errors
@@ -27,6 +28,7 @@ class VkOrdException extends ClientException
     {
         return [
             'responseCode' => $this->getCode(),
+            'responseMessage' => $this->getMessage(),
             'errors' => $this->getErrors()->jsonSerialize(),
         ];
     }
