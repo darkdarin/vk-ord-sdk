@@ -4,11 +4,13 @@ namespace DarkDarin\VkOrdSdk;
 
 use Argo\RestClient\RestMethodDefinition;
 use Argo\RestClient\RestRequestFactory;
+use Argo\Serializer\Exception\SerializerException;
 use Argo\Serializer\JsonEncoder\JsonEncoder;
 use Argo\Types\Atomic\ClassType;
 use DarkDarin\VkOrdSdk\Attribute\MultipartRequest;
 use DarkDarin\VkOrdSdk\DTO\Error;
 use DarkDarin\VkOrdSdk\DTO\Errors;
+use DarkDarin\VkOrdSdk\DTO\UploadFileInfo;
 use DarkDarin\VkOrdSdk\Exceptions\BadRequestException;
 use DarkDarin\VkOrdSdk\Exceptions\ConflictException;
 use DarkDarin\VkOrdSdk\Exceptions\ForbiddenException;
@@ -57,25 +59,50 @@ class VkOrdRequestFactory extends RestRequestFactory implements VkOrdRequestFact
             ->createRequest($methodDefinition->method, $this->getUrl($this->baseUrl, $methodDefinition));
 
         foreach ($methodDefinition->body as $fieldName => $value) {
-            if ($value instanceof StreamInterface) {
-                $builder->addResource($fieldName, $value);
-            } elseif ($value !== null) {
-                if (is_array($value) || is_object($value)) {
-                    $builder->addResource(
-                        $fieldName,
-                        $this->streamFactory->createStream(
-                            $this->serializer->serialize($value, JsonEncoder::FORMAT),
-                        ),
-                        ['headers' => ['Content-Type' => 'application/json']],
-                    );
+            if ($value instanceof UploadFileInfo) {
+                if ($value->file instanceof StreamInterface) {
+                    $stream = $value->file;
                 } else {
-                    $builder->addResource($fieldName, $this->streamFactory->createStream($value));
+                    $stream = $this->streamFactory->createStreamFromFile($value->file);
                 }
+                $this->addStreamToMultipart($builder, $fieldName, $stream, $value->name);
+            } elseif ($value instanceof StreamInterface) {
+                $this->addStreamToMultipart($builder, $fieldName, $value);
+            } elseif (is_array($value) || is_object($value)) {
+                $this->addJsonToMultipart($builder, $fieldName, $value);
+            } elseif (is_string($value) || is_int($value) || is_float($value)) {
+                $value = $this->streamFactory->createStream((string) $value);
+                $this->addStreamToMultipart($builder, $fieldName, $value);
             }
         }
 
         return $request->withBody($builder->build())
             ->withHeader('Content-Type', 'multipart/form-data; boundary=' . $builder->getBoundary());
+    }
+
+    private function addStreamToMultipart(MultipartStreamBuilder $builder, string $fieldName, StreamInterface $stream, ?string $name = null): void
+    {
+        $options = [];
+
+        if ($name !== null) {
+            $options['filename'] = $name;
+        }
+
+        $builder->addResource($fieldName, $stream, $options);
+    }
+
+    /**
+     * @throws SerializerException
+     */
+    private function addJsonToMultipart(MultipartStreamBuilder $builder, string $fieldName, array|object $data): void
+    {
+        $resource = $this->streamFactory->createStream(
+            $this->serializer->serialize($data, JsonEncoder::FORMAT),
+        );
+
+        $options = ['headers' => ['Content-Type' => 'application/json']];
+
+        $builder->addResource($fieldName, $resource, $options);
     }
 
     /**

@@ -53,6 +53,7 @@ use DarkDarin\VkOrdSdk\DTO\Person;
 use DarkDarin\VkOrdSdk\DTO\StatisticItems;
 use DarkDarin\VkOrdSdk\DTO\StatisticItemsRequest;
 use DarkDarin\VkOrdSdk\DTO\StatisticItemToDelete;
+use DarkDarin\VkOrdSdk\DTO\UploadFileInfo;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -446,7 +447,7 @@ readonly class VkOrd
      * @link https://ord.vk.com/help/api/swagger/#/media/v1-upload-media
      *
      * @param string $external_id Внешний идентификатор медиафайла
-     * @param StreamInterface $media_file Загружаемый файл
+     * @param StreamInterface | UploadFileInfo $media_file Загружаемый файл
      * @param string $description Описание файла
      * @return MediaCheckSumInfo Информация о контрольной сумме медиафайла
      *
@@ -458,7 +459,7 @@ readonly class VkOrd
     #[MultipartRequest]
     public function uploadMedia(
         string $external_id,
-        StreamInterface $media_file,
+        StreamInterface|UploadFileInfo $media_file,
         string $description,
     ): MediaCheckSumInfo {
         return $this->client->send(__METHOD__, func_get_args());
