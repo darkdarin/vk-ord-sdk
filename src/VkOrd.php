@@ -98,7 +98,7 @@ readonly class VkOrd
      * @throws UnauthorizedException
      */
     #[Get('/v1/person')]
-    public function getPersonList(int $offset = null, int $limit = null): ExternalIdItems
+    public function getPersonList(?int $offset = null, ?int $limit = null): ExternalIdItems
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -152,7 +152,7 @@ readonly class VkOrd
      * @throws UnauthorizedException
      */
     #[Get('/v1/contract')]
-    public function getContractList(int $offset = null, int $limit = null): ExternalIdItems
+    public function getContractList(?int $offset = null, ?int $limit = null): ExternalIdItems
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -210,7 +210,7 @@ readonly class VkOrd
      * @throws UnauthorizedException
      */
     #[Get('/v1/pad')]
-    public function getPadList(int $offset = null, int $limit = null): ExternalIdItems
+    public function getPadList(?int $offset = null, ?int $limit = null): ExternalIdItems
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -285,7 +285,7 @@ readonly class VkOrd
      * @throws UnauthorizedException
      */
     #[Get('/v3/creative')]
-    public function getCreativeList(int $offset = null, int $limit = null): ExternalIdItems
+    public function getCreativeList(?int $offset = null, ?int $limit = null): ExternalIdItems
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -303,7 +303,7 @@ readonly class VkOrd
      * @throws UnauthorizedException
      */
     #[Get('v3/creative/list/erids')]
-    public function getCreativeEridList(int $offset = null, int $limit = null): CreativeEridList
+    public function getCreativeEridList(?int $offset = null, ?int $limit = null): CreativeEridList
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -322,7 +322,7 @@ readonly class VkOrd
      * @throws UnauthorizedException
      */
     #[Get('v3/creative/list/erid_external_ids')]
-    public function getCreativeEridExternalIdsList(int $offset = null, int $limit = null): CreativeEridExternalIdsList
+    public function getCreativeEridExternalIdsList(?int $offset = null, ?int $limit = null): CreativeEridExternalIdsList
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -435,7 +435,7 @@ readonly class VkOrd
      * @throws NotFoundException
      */
     #[Get('/v1/media')]
-    public function getMediaList(int $offset = null, int $limit = null): ExternalIdItems
+    public function getMediaList(?int $offset = null, ?int $limit = null): ExternalIdItems
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -514,7 +514,7 @@ readonly class VkOrd
      * @throws UnauthorizedException
      */
     #[Get('/v4/invoice')]
-    public function getInvoiceList(int $limit = null, int $offset = null): InvoiceList
+    public function getInvoiceList(?int $limit = null, ?int $offset = null): InvoiceList
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -710,11 +710,11 @@ readonly class VkOrd
      */
     #[Get('/v3/statistics/list')]
     public function getStatisticsList(
-        int $offset = null,
-        int $limit = null,
-        array $months = null,
-        array $creative_external_ids = null,
-        string $pad_external_ids = null,
+        ?int $offset = null,
+        ?int $limit = null,
+        ?array $months = null,
+        ?array $creative_external_ids = null,
+        ?string $pad_external_ids = null,
     ): StatisticItems {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -792,12 +792,12 @@ readonly class VkOrd
      */
     #[Get('/v1/erir_statuses')]
     public function getErirStatuses(
-        ErirDataTypeEnum $data_type = null,
-        ErirStatusEnum $erir_status = null,
-        int $offset = null,
-        int $limit = null,
-        int $limit_per_entity = null,
-        array $external_id = null,
+        ?ErirDataTypeEnum $data_type = null,
+        ?ErirStatusEnum $erir_status = null,
+        ?int $offset = null,
+        ?int $limit = null,
+        ?int $limit_per_entity = null,
+        ?array $external_id = null,
     ): ErirStatusItems {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -820,12 +820,12 @@ readonly class VkOrd
      */
     #[Post('/v1/erir_statuses')]
     public function getErirStatusesAdditional(
-        ErirDataTypeEnum $data_type = null,
-        ErirStatusEnum $erir_status = null,
-        array $external_id = null,
-        int $offset = null,
-        int $limit = null,
-        int $limit_per_entity = null,
+        ?ErirDataTypeEnum $data_type = null,
+        ?ErirStatusEnum $erir_status = null,
+        ?array $external_id = null,
+        ?int $offset = null,
+        ?int $limit = null,
+        ?int $limit_per_entity = null,
     ): ErirStatusItems {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -847,11 +847,11 @@ readonly class VkOrd
      */
     #[Get('/v1/dict/kktu')]
     public function getKktuDictionary(
-        string $search = null,
-        KKTULangEnum $lang = null,
-        int $offset = null,
-        int $limit = null,
-        string $codes = null,
+        ?string $search = null,
+        ?KKTULangEnum $lang = null,
+        ?int $offset = null,
+        ?int $limit = null,
+        ?string $codes = null,
     ): KKTUItems {
         return $this->client->send(__METHOD__, func_get_args());
     }
@@ -900,7 +900,7 @@ readonly class VkOrd
      * @throws UnauthorizedException
      */
     #[Get('/v1/cid')]
-    public function getCidList(int $offset = null, int $limit = null): CidItems
+    public function getCidList(?int $offset = null, ?int $limit = null): CidItems
     {
         return $this->client->send(__METHOD__, func_get_args());
     }
