@@ -36,6 +36,7 @@ class VkOrdRequestFactory extends RestRequestFactory implements VkOrdRequestFact
         $this->token = $token;
     }
 
+    #[\Override]
     public function makeRequest(RestMethodDefinition $methodDefinition): RequestInterface
     {
         $multipartRequest = $methodDefinition->methodDefinition->attributes->firstByType(MultipartRequest::class);

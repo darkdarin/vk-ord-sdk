@@ -11,6 +11,7 @@ use Illuminate\Support\ServiceProvider;
  */
 class VkOrdSdkServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         $this->app->bind(VkOrdRequestFactoryInterface::class, function (Container $container) {

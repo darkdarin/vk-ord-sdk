@@ -22,7 +22,8 @@
         "illuminate/support": "^10.0|^11.0|^12.0",
         "laravel/pint": "^1.26",
         "roave/security-advisories": "dev-latest",
-        "vimeo/psalm": "^6.13"
+        "vimeo/psalm": "^6.13",
+        "rector/rector": "^2.3"
     },
     "extra": {
         "laravel": {
